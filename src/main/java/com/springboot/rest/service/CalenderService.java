@@ -6,10 +6,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.springboot.rest.Entity.UserAmountEntity;
+import com.springboot.rest.auth.CustomUserDetails;
 import com.springboot.rest.dto.CalenderDto;
+import com.springboot.rest.dto.CalenderInitResponseDto;
 import com.springboot.rest.repository.UserAmountRepository;
 
 @Service
@@ -24,18 +27,21 @@ public class CalenderService {
 	 * @param userId
 	 * @return
 	 */
-	public List<CalenderDto> getCallenderList(long userId) {
+	public CalenderInitResponseDto getCallenderList() {
 
+		CalenderInitResponseDto responseDto = new CalenderInitResponseDto();
 		List<CalenderDto> dtoList = new ArrayList<>();
 		List<String> dateList = new ArrayList<>();
 
-		Map<String, Long> grpMap = userAmountRepository.findAll(String.valueOf(userId)).stream()
+		CustomUserDetails user = getUserInfo();
+
+		Map<String, Long> grpMap = userAmountRepository.findAll(String.valueOf(user.getId())).stream()
 				.filter(e -> "0".equals(e.getBalanceFlg()))
 				.collect(
 						Collectors.groupingBy(UserAmountEntity::getBalanceDate,
 								Collectors.summingLong(UserAmountEntity::getAmount)));
 
-		Map<String, Long> grpExpenditureMap = userAmountRepository.findAll(String.valueOf(userId)).stream()
+		Map<String, Long> grpExpenditureMap = userAmountRepository.findAll(String.valueOf(user.getId())).stream()
 				.filter(e -> "1".equals(e.getBalanceFlg()))
 				.collect(
 						Collectors.groupingBy(UserAmountEntity::getBalanceDate,
@@ -71,8 +77,17 @@ public class CalenderService {
 			dto.setStart(date.replace("/", "-"));
 			dtoList.add(dto);
 		}
-
-		return dtoList;
+		responseDto.setCalenderDtoList(dtoList);
+		return responseDto;
 	}
 
+	/**
+	 * Get usr info.
+	 * 
+	 * @return
+	 */
+	private CustomUserDetails getUserInfo() {
+		return (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
+	}
 }

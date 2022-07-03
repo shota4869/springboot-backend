@@ -7,11 +7,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.springboot.rest.Entity.MCategoryEntity;
+import com.springboot.rest.auth.CustomUserDetails;
 import com.springboot.rest.date.CreateDate;
 import com.springboot.rest.dto.CategoryDto;
 import com.springboot.rest.dto.HomeInitResponseDto;
@@ -48,9 +50,11 @@ public class HomeService {
 	 * @param userId
 	 * @return
 	 */
-	public int getSaveAmount(long userId) {
+	public int getSaveAmount() {
 
-		List<UserAmountSettingDto> responseDtoList = getAmountSettingByUseid(userId);
+		CustomUserDetails user = getUserInfo();
+
+		List<UserAmountSettingDto> responseDtoList = getAmountSettingByUseid(user.getId());
 
 		if (CollectionUtils.isEmpty(responseDtoList)) {
 			return 0;
@@ -94,17 +98,19 @@ public class HomeService {
 	 * @param userId
 	 * @return
 	 */
-	public int saveAmountCalculete(long userId) {
+	public int saveAmountCalculete() {
+
+		CustomUserDetails user = getUserInfo();
 
 		int amount = 0;
-		List<UsableAmountDto> dtoList = usableAmountLogic.findAll(userId, CreateDate.getNowDate());
+		List<UsableAmountDto> dtoList = usableAmountLogic.findAll(user.getId(), CreateDate.getNowDate());
 
 		if (!CollectionUtils.isEmpty(dtoList)) {
 			amount = dtoList.get(0).getUsableAmount();
 
 		}
 
-		return amount + calculateBalanceLogic.balanceCalculete(userId);
+		return amount + calculateBalanceLogic.balanceCalculete(user.getId());
 	}
 
 	/**
@@ -175,12 +181,14 @@ public class HomeService {
 	 * @param userId
 	 * @return usableAmount.
 	 */
-	public int findUsableAmount(long userId) throws SQLException {
+	public int findUsableAmount() throws SQLException {
+
+		CustomUserDetails user = getUserInfo();
 
 		List<UsableAmountDto> dtoList = new ArrayList<>();
 		int usableAmount = 0;
 		try {
-			dtoList = usableAmountLogic.commonProcess(userId);
+			dtoList = usableAmountLogic.commonProcess(user.getId());
 		} catch (SQLException e) {
 			throw e;
 		}
@@ -189,8 +197,18 @@ public class HomeService {
 			usableAmount = dtoList.get(0).getUsableAmount();
 		}
 
-		int todayBlance = calculateBalanceLogic.balanceCalculete(userId);
+		int todayBlance = calculateBalanceLogic.balanceCalculete(user.getId());
 
 		return usableAmount + todayBlance;
+	}
+
+	/**
+	 * Get user info.
+	 * 
+	 * @return CustomUserDetails.
+	 */
+	private CustomUserDetails getUserInfo() {
+		return (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
 	}
 }

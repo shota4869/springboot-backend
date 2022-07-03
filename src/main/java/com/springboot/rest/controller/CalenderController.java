@@ -1,14 +1,13 @@
 package com.springboot.rest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.springboot.rest.auth.CustomUserDetails;
 import com.springboot.rest.dto.CalenderInitResponseDto;
 import com.springboot.rest.service.CalenderService;
 
@@ -27,23 +26,11 @@ public class CalenderController {
 	 */
 	@GetMapping
 	public ResponseEntity<CalenderInitResponseDto> init() {
-
-		CustomUserDetails user = getUserInfo();
-
-		CalenderInitResponseDto responseDto = new CalenderInitResponseDto();
-		responseDto.setCalenderDtoList(calenderService.getCallenderList(user.getId()));
-		return ResponseEntity.ok(responseDto);
-
-	}
-
-	/**
-	 * Get usr info.
-	 * 
-	 * @return
-	 */
-	private CustomUserDetails getUserInfo() {
-		return (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
+		try {
+			return ResponseEntity.ok(calenderService.getCallenderList());
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
 	}
 
 }

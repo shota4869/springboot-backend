@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.springboot.rest.Entity.UserAmountAndMCategoryJoinEntity;
+import com.springboot.rest.auth.CustomUserDetails;
 import com.springboot.rest.dto.BalanceListInitResponceDto;
 import com.springboot.rest.dto.UserAmountDto;
 import com.springboot.rest.repository.UserAmountRepository;
@@ -25,13 +27,16 @@ public class BalanceListService {
 	 * @param date
 	 * @return
 	 */
-	public BalanceListInitResponceDto findBalanceList(long userId, String date) {
+	public BalanceListInitResponceDto findBalanceList(String date) {
 
 		BalanceListInitResponceDto responseDto = new BalanceListInitResponceDto();
 		List<UserAmountDto> incomeList = new ArrayList<>();
 		List<UserAmountDto> expenditureList = new ArrayList<>();
 
-		List<UserAmountAndMCategoryJoinEntity> entity = userAmountRepository.findByUserIdAndDate(String.valueOf(userId),
+		CustomUserDetails user = getUserInfo();
+
+		List<UserAmountAndMCategoryJoinEntity> entity = userAmountRepository.findByUserIdAndDate(
+				String.valueOf(user.getId()),
 				date);
 
 		entity.stream()
@@ -89,4 +94,13 @@ public class BalanceListService {
 
 	}
 
+	/**
+	 * Get user info.
+	 * 
+	 * @return CustomUserDetails.
+	 */
+	private CustomUserDetails getUserInfo() {
+		return (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
+	}
 }

@@ -1,6 +1,7 @@
 package com.springboot.rest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,11 @@ public class LoginController {
 	@GetMapping
 	public ResponseEntity<LoginResponseDto> init() {
 
-		return ResponseEntity.ok(loginService.init());
+		try {
+			return ResponseEntity.ok(loginService.init());
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
 
 	}
 }
