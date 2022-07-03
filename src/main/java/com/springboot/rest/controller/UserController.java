@@ -1,5 +1,7 @@
 package com.springboot.rest.controller;
 
+import java.sql.SQLException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +22,21 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	/**
+	 * Regist user.
+	 * 
+	 * @param user
+	 * @return HttpStatus list.
+	 */
 	@PostMapping("/regist-user")
-	public ResponseEntity<HttpStatus> updateEmployee(@RequestBody UserDto user) {
+	public ResponseEntity<HttpStatus> registUser(@RequestBody UserDto user) {
 
-		if (userService.registUser(user.getUsername(), user.getEmail(), user.getPassword())) {
+		try {
+			userService.registUser(user.getUsername(), user.getEmail(), user.getPassword());
 			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+		} catch (SQLException e) {
+			return new ResponseEntity<HttpStatus>(HttpStatus.CONFLICT);
 		}
-
-		return new ResponseEntity<HttpStatus>(HttpStatus.CONFLICT);
 
 	}
 

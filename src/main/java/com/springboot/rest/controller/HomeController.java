@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.springboot.rest.auth.CustomUserDetails;
 import com.springboot.rest.dto.HomeInitResponseDto;
 import com.springboot.rest.dto.UserAmountRequestDto;
-import com.springboot.rest.service.AmountSettingService;
-import com.springboot.rest.service.MCategoryService;
-import com.springboot.rest.service.UsableAmountService;
-import com.springboot.rest.service.UserAmountService;
+import com.springboot.rest.service.HomeService;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -27,16 +24,7 @@ import com.springboot.rest.service.UserAmountService;
 public class HomeController {
 
 	@Autowired
-	private MCategoryService mCategoryService;
-
-	@Autowired
-	private UserAmountService userAmountService;
-
-	@Autowired
-	private UsableAmountService usableAmountService;
-
-	@Autowired
-	private AmountSettingService amountSettingService;
+	private HomeService homeService;
 
 	/**
 	 * Initial process.
@@ -46,13 +34,13 @@ public class HomeController {
 	@GetMapping
 	public ResponseEntity<HomeInitResponseDto> init() {
 
-		HomeInitResponseDto dto = mCategoryService.findCategory();
+		HomeInitResponseDto dto = homeService.findCategory();
 
 		CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();
 		try {
-			dto.setSaveAmount(amountSettingService.getSaveAmount(user.getId()));
-			dto.setUsableAmount(usableAmountService.findUsableAmount(user.getId()));
+			//			dto.setSaveAmount(amountSettingService.getSaveAmount(user.getId()));
+			dto.setUsableAmount(homeService.findUsableAmount(user.getId()));
 
 			return ResponseEntity.ok(dto);
 		} catch (RuntimeException e) {
@@ -76,9 +64,9 @@ public class HomeController {
 		CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();
 		try {
-			userAmountService.registUserAmount(userAmountDto);
+			homeService.registUserAmount(userAmountDto);
 
-			return new ResponseEntity<Integer>(userAmountService.saveAmountCalculete(user.getId()), HttpStatus.OK);
+			return new ResponseEntity<Integer>(homeService.saveAmountCalculete(user.getId()), HttpStatus.OK);
 
 		} catch (RuntimeException e) {
 			return new ResponseEntity<Integer>(HttpStatus.CONFLICT);

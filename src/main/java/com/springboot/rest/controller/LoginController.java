@@ -1,19 +1,22 @@
 package com.springboot.rest.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.springboot.rest.auth.CustomUserDetails;
 import com.springboot.rest.dto.LoginResponseDto;
+import com.springboot.rest.service.LoginService;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/login")
 public class LoginController {
+
+	@Autowired
+	private LoginService loginService;
 
 	/**
 	 * Init process.
@@ -23,13 +26,7 @@ public class LoginController {
 	@GetMapping
 	public ResponseEntity<LoginResponseDto> init() {
 
-		LoginResponseDto dto = new LoginResponseDto();
-
-		CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
-
-		dto.setUserDetails(user);
-		return ResponseEntity.ok(dto);
+		return ResponseEntity.ok(loginService.init());
 
 	}
 }

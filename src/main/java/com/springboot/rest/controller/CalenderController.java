@@ -20,6 +20,11 @@ public class CalenderController {
 	@Autowired
 	private CalenderService calenderService;
 
+	/**
+	 * Init process.
+	 * 
+	 * @return
+	 */
 	@GetMapping
 	public ResponseEntity<CalenderInitResponseDto> init() {
 
@@ -31,6 +36,11 @@ public class CalenderController {
 
 	}
 
+	/**
+	 * Get usr info.
+	 * 
+	 * @return
+	 */
 	private CustomUserDetails getUserInfo() {
 		return (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();

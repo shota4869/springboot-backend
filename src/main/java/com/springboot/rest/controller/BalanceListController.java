@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.springboot.rest.auth.CustomUserDetails;
 import com.springboot.rest.dto.BalanceListInitResponceDto;
 import com.springboot.rest.dto.BalanceListRequestDto;
-import com.springboot.rest.service.UserAmountService;
+import com.springboot.rest.service.BalanceListService;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -23,24 +23,24 @@ import com.springboot.rest.service.UserAmountService;
 public class BalanceListController {
 
 	@Autowired
-	private UserAmountService userAmountService;
+	private BalanceListService balanceListService;
 
 	@PostMapping
 	public ResponseEntity<BalanceListInitResponceDto> init(@RequestBody BalanceListRequestDto balanceListRequestDto) {
 		CustomUserDetails user = getUserInfo();
 
-		System.out.println(balanceListRequestDto.getDate());
-		return ResponseEntity.ok(userAmountService.findBalanceList(user.getId(), balanceListRequestDto.getDate()));
+		return ResponseEntity.ok(balanceListService.findBalanceList(user.getId(), balanceListRequestDto.getDate()));
 
 	}
 
 	@DeleteMapping("{id}")
 	public ResponseEntity<HttpStatus> deleteBalance(@PathVariable String id) {
-
-		userAmountService.delete(id);
-
-		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
-
+		try {
+			balanceListService.delete(id);
+			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<HttpStatus>(HttpStatus.CONFLICT);
+		}
 	}
 
 	private CustomUserDetails getUserInfo() {

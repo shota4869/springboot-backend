@@ -1,10 +1,12 @@
 package com.springboot.rest.service;
 
+import java.sql.SQLException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.springboot.rest.Entity.UserEntity;
 import com.springboot.rest.date.CreateDate;
 import com.springboot.rest.repository.UserRepository;
 
@@ -17,21 +19,25 @@ public class UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	public boolean registUser(String username, String email, String password) {
+	/**
+	 * Regist user.
+	 * 
+	 * @param username
+	 * @param email
+	 * @param password
+	 * @throws SQLException
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public void registUser(String username, String email, String password) throws SQLException {
 
+		//パスワードのエンコード
 		String pass = passwordEncoder.encode(password);
 
 		int count = userRepository.registUser(username, email, pass, CreateDate.getNowDateTime(),
 				CreateDate.getNowDateTime());
+
 		if (count < 1) {
-			return false;
+			throw new SQLException();
 		}
-
-		return true;
 	}
-
-	public UserEntity selectUser(String email) {
-		return userRepository.findByEmail(email).get();
-	}
-
 }
