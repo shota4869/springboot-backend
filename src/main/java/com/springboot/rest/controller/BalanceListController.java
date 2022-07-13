@@ -23,6 +23,12 @@ public class BalanceListController {
 	@Autowired
 	private BalanceListService balanceListService;
 
+	/**
+	 * 
+	 * 
+	 * @param balanceListRequestDto
+	 * @return
+	 */
 	@PostMapping
 	public ResponseEntity<BalanceListInitResponceDto> init(@RequestBody BalanceListRequestDto balanceListRequestDto) {
 
@@ -34,6 +40,12 @@ public class BalanceListController {
 
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param id
+	 * @return
+	 */
 	@DeleteMapping("{id}")
 	public ResponseEntity<HttpStatus> deleteBalance(@PathVariable String id) {
 		try {

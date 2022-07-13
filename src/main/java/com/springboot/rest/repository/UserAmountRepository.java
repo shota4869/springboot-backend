@@ -18,28 +18,33 @@ public interface UserAmountRepository {
 			+ "`balance_year_month`,"
 			+ "`balance_date`,"
 			+ "`category_code`,"
-			+ "`balance_flg`,"
-			+ "`amount`,"
-			+ "`remarks`,"
-			+ "`create_at`,"
+			+ " fix_flg, "
+			+ " balance_name, "
+			+ "`balance_flg`, "
+			+ "`amount`, "
+			+ "`remarks`, "
+			+ "`create_at`, "
 			+ "`update_at`)"
 			+ "VALUES"
 			+ "(#{userId},"
 			+ "#{balanceYearMonth},"
 			+ "#{balanceDate},"
 			+ "#{categoryCode},"
+			+ "#{fixFlg},"
+			+ "#{balanceName},"
 			+ "#{balanceFlg},"
 			+ "#{amount},"
 			+ "#{remarks},"
 			+ "#{create},"
 			+ "#{update})")
-	int registUserAmount(String userId, String balanceYearMonth, String balanceDate, String categoryCode,
+	int registUserAmount(String userId, String balanceYearMonth, String balanceDate, String categoryCode, String fixFlg,
+			String balanceName,
 			String balanceFlg, String amount, String remarks, String create, String update);
 
 	@Select("SELECT * FROM `health_management`.`user_amount_detail` WHERE user_id = #{userId} and balance_date = #{date} ")
 	List<UserAmountEntity> findAllByUserId(String userId, String date);
 
-	@Select(" SELECT  user.id, user.user_id, user.balance_year_month, user.balance_date,user.category_code, user.balance_flg, user.amount, user.remarks,category.category_name FROM user_amount_detail as user "
+	@Select(" SELECT  user.id, user.user_id, user.balance_year_month, user.balance_date,user.category_code,user.fix_flg,user.balance_name  ,user.balance_flg, user.amount, user.remarks,category.category_name FROM user_amount_detail as user "
 			+ " INNER JOIN m_category_code as category  ON user.category_code = category.category_code where user.user_id = #{userId} and user.balance_date = #{date} ")
 	List<UserAmountAndMCategoryJoinEntity> findByUserIdAndDate(String userId, String date);
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.springboot.rest.dto.AmountSettingRequestDto;
 import com.springboot.rest.dto.LineSettingRequestDto;
 import com.springboot.rest.dto.SettingResponseDto;
+import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.service.SettingService;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -50,6 +51,22 @@ public class SettingController {
 			settingService.saveAmountsetting(requestDto);
 			return new ResponseEntity<>(HttpStatus.OK);
 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+	}
+
+	/**
+	 * Regist line setting.
+	 * 
+	 * @param requestDto
+	 * @return HttpStatus list.
+	 */
+	@PostMapping("/balance")
+	public ResponseEntity<HttpStatus> saveBalanceSetting(@RequestBody UserAmountRequestDto requestDto) {
+		try {
+			settingService.saveBalanceSetting(requestDto);
+			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}

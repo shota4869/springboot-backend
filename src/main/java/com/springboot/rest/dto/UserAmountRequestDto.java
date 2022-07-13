@@ -16,6 +16,8 @@ public class UserAmountRequestDto {
 
 	private String remarks;
 
+	private String fixFlg;
+
 	public String getUserId() {
 		return userId;
 	}
@@ -70,6 +72,14 @@ public class UserAmountRequestDto {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public String getFixFlg() {
+		return fixFlg;
+	}
+
+	public void setFixFlg(String fixFlg) {
+		this.fixFlg = fixFlg;
 	}
 
 }

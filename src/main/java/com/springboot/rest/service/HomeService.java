@@ -9,7 +9,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.springboot.rest.Entity.MCategoryEntity;
@@ -22,9 +21,9 @@ import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.dto.UserAmountSettingDto;
 import com.springboot.rest.logic.CalculateBalanceLogic;
 import com.springboot.rest.logic.UsableAmountLogic;
+import com.springboot.rest.logic.UserAmountLogic;
 import com.springboot.rest.repository.AmountSettingRepository;
 import com.springboot.rest.repository.MCategoryRepository;
-import com.springboot.rest.repository.UserAmountRepository;
 
 @Service
 public class HomeService {
@@ -39,7 +38,7 @@ public class HomeService {
 	private UsableAmountLogic usableAmountLogic;
 
 	@Autowired
-	private UserAmountRepository userAmountRepository;
+	private UserAmountLogic userAmountLogic;
 
 	@Autowired
 	private MCategoryRepository categoryRepository;
@@ -119,20 +118,9 @@ public class HomeService {
 	 * @param userAmountDto
 	 * @throws SQLException
 	 */
-	@Transactional(rollbackFor = Exception.class)
 	public void registUserAmount(UserAmountRequestDto userAmountDto) throws SQLException {
 
-		int count = userAmountRepository.registUserAmount(userAmountDto.getUserId(),
-				userAmountDto.getDate().substring(0, 7),
-				userAmountDto.getDate(),
-				String.format("%03d", Integer.valueOf(userAmountDto.getCategoryCode())),
-				userAmountDto.getBalanceFlg(), userAmountDto.getAmount(), userAmountDto.getRemarks(),
-				CreateDate.getNowDateTime(), CreateDate.getNowDateTime());
-
-		if (count < 1) {
-			new SQLException();
-		}
-
+		userAmountLogic.registUserAmount(userAmountDto);
 	}
 
 	/**

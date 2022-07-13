@@ -26,6 +26,12 @@ public class UserAmountAndMCategoryJoinEntity {
 	@Column(name = "category_code")
 	private String categoryCode;
 
+	@Column(name = "fix_name")
+	private String fixFlg;
+
+	@Column(name = "balance_name")
+	private String balanceName;
+
 	@Column(name = "balance_flg")
 	private String balanceFlg;
 
@@ -76,6 +82,22 @@ public class UserAmountAndMCategoryJoinEntity {
 
 	public void setCategoryCode(String categoryCode) {
 		this.categoryCode = categoryCode;
+	}
+
+	public String getFixFlg() {
+		return fixFlg;
+	}
+
+	public void setFixFlg(String fixFlg) {
+		this.fixFlg = fixFlg;
+	}
+
+	public String getBalanceName() {
+		return balanceName;
+	}
+
+	public void setBalanceName(String balanceName) {
+		this.balanceName = balanceName;
 	}
 
 	public String getBalanceFlg() {

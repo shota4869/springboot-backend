@@ -55,7 +55,6 @@ public class HomeController {
 	 */
 	@PostMapping("/save")
 	public ResponseEntity<Integer> saveBalance(@RequestBody UserAmountRequestDto userAmountDto) {
-
 		try {
 			homeService.registUserAmount(userAmountDto);
 			return new ResponseEntity<Integer>(homeService.saveAmountCalculete(), HttpStatus.OK);
@@ -65,7 +64,5 @@ public class HomeController {
 			// TODO 自動生成された catch ブロック
 			return new ResponseEntity<Integer>(HttpStatus.CONFLICT);
 		}
-
 	}
-
 }

@@ -15,8 +15,10 @@ import com.springboot.rest.date.CreateDate;
 import com.springboot.rest.dto.AmountSettingRequestDto;
 import com.springboot.rest.dto.LineSettingRequestDto;
 import com.springboot.rest.dto.SettingResponseDto;
+import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.dto.UserAmountSettingDto;
 import com.springboot.rest.dto.UserLineSettingDto;
+import com.springboot.rest.logic.UserAmountLogic;
 import com.springboot.rest.repository.AmountSettingRepository;
 import com.springboot.rest.repository.LineSettingRepository;
 
@@ -28,6 +30,8 @@ public class SettingService {
 
 	@Autowired
 	private LineSettingRepository repository;
+	@Autowired
+	private UserAmountLogic userAmountLogic;
 
 	/**
 	 * Inital process.
@@ -80,11 +84,21 @@ public class SettingService {
 			//2レコード登録されていた場合はエラーを返す。（デッドコード）
 			throw new Exception();
 		} else {
-			//登録されていれば更新処理
-			System.out.println(requestDto.getFixExpenditure());
 
 			System.out.println(updateSetting(user.getId(), requestDto));
 		}
+
+	}
+
+	/**
+	 * Regist line setting.
+	 * 
+	 * @param requestDto
+	 * @return HttpStatus list.
+	 */
+	public void saveBalanceSetting(UserAmountRequestDto requestDto) throws Exception {
+
+		userAmountLogic.registUserAmount(requestDto);
 
 	}
 
@@ -158,15 +172,15 @@ public class SettingService {
 	 */
 	public boolean registSetting(long userId, AmountSettingRequestDto requestDto) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
-		Date date = new Date();
-		int result = settingRepository.insert(String.valueOf(userId), sdf.format(date).toString(),
-				requestDto.getGoalAmount(), requestDto.getFixIncome(), requestDto.getFixExpenditure(),
-				CreateDate.getNowDateTime(), CreateDate.getNowDateTime());
-
-		if (result < 1) {
-			return false;
-		}
+		//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
+		//		Date date = new Date();
+		//		int result = settingRepository.insert(String.valueOf(userId), sdf.format(date).toString(),
+		//				requestDto.getGoalAmount(), requestDto.getFixIncome(), requestDto.getFixExpenditure(),
+		//				CreateDate.getNowDateTime(), CreateDate.getNowDateTime());
+		//
+		//		if (result < 1) {
+		//			return false;
+		//		}
 
 		return true;
 	}
@@ -178,13 +192,13 @@ public class SettingService {
 	 */
 	public boolean updateSetting(long userId, AmountSettingRequestDto requestDto) {
 
-		int result = settingRepository.update(String.valueOf(userId), CreateDate.getNowDate().substring(0, 7),
-				requestDto.getGoalAmount(), requestDto.getFixIncome(), requestDto.getFixExpenditure(),
-				CreateDate.getNowDateTime());
-
-		if (result < 1) {
-			return false;
-		}
+		//		int result = settingRepository.update(String.valueOf(userId), CreateDate.getNowDate().substring(0, 7),
+		//				requestDto.getGoalAmount(), requestDto.getFixIncome(), requestDto.getFixExpenditure(),
+		//				CreateDate.getNowDateTime());
+		//
+		//		if (result < 1) {
+		//			return false;
+		//		}
 		return true;
 	}
 
