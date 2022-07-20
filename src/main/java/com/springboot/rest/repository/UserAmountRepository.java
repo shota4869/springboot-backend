@@ -48,6 +48,10 @@ public interface UserAmountRepository {
 			+ " INNER JOIN m_category_code as category  ON user.category_code = category.category_code where user.user_id = #{userId} and user.balance_date = #{date} ")
 	List<UserAmountAndMCategoryJoinEntity> findByUserIdAndDate(String userId, String date);
 
+	@Select(" SELECT  user.id, user.user_id, user.balance_year_month, user.balance_date,user.category_code,user.fix_flg,user.balance_name  ,user.balance_flg, user.amount, user.remarks,category.category_name FROM user_amount_detail as user "
+			+ " INNER JOIN m_category_code as category  ON user.category_code = category.category_code where user.user_id = #{userId} and user.balance_year_month = #{month} ")
+	List<UserAmountAndMCategoryJoinEntity> findByUserIdAndMonth(String userId, String month);
+
 	@Delete("DELETE FROM user_amount_detail "
 			+ " WHERE id = #{id} ;")
 	int delete(String id);

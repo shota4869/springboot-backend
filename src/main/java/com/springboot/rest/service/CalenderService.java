@@ -1,6 +1,7 @@
 package com.springboot.rest.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import com.springboot.rest.Entity.UserAmountEntity;
 import com.springboot.rest.auth.CustomUserDetails;
 import com.springboot.rest.dto.CalenderDto;
 import com.springboot.rest.dto.CalenderInitResponseDto;
+import com.springboot.rest.logic.FixAmountLogic;
 import com.springboot.rest.repository.UserAmountRepository;
 
 @Service
@@ -20,6 +22,9 @@ public class CalenderService {
 
 	@Autowired
 	private UserAmountRepository userAmountRepository;
+
+	@Autowired
+	private FixAmountLogic fixAmountLogic;
 
 	/**
 	 * Get calender info.
@@ -126,8 +131,41 @@ public class CalenderService {
 			dto.setColor("Green");
 			dtoList.add(dto);
 		}
+		init();
 		responseDto.setCalenderDtoList(dtoList);
 		return responseDto;
+	}
+
+	public CalenderInitResponseDto init() {
+		CalenderInitResponseDto responseDto = new CalenderInitResponseDto();
+		List<CalenderDto> dtoList = new ArrayList<>();
+
+		//1日に使える金額取得
+		Calendar calendar = Calendar.getInstance();
+
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH) + 1;
+
+		String date = "";
+		//月毎の全日でループ
+		//1日の収支を算出
+		int day = 1;
+		while (day <= fixAmountLogic.getDays()) {
+			CalenderDto dto = new CalenderDto();
+			date = String.valueOf(year) + "-" + String.format("%02d", month) + "-" + String.format("%02d", day);
+			//			System.out.println(
+			//					String.valueOf(year) + "/" + String.format("%02d", month) + "/" + String.format("%02d", day));
+
+			dto.setStart(date);
+			dto.setTitle("adfa");
+			dtoList.add(dto);
+
+			day++;
+		}
+
+		responseDto.setCalenderDtoList(dtoList);
+		return responseDto;
+
 	}
 
 	/**

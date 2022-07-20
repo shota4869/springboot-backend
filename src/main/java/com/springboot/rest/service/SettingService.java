@@ -1,5 +1,6 @@
 package com.springboot.rest.service;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.springboot.rest.auth.CustomUserDetails;
@@ -15,9 +17,11 @@ import com.springboot.rest.date.CreateDate;
 import com.springboot.rest.dto.AmountSettingRequestDto;
 import com.springboot.rest.dto.LineSettingRequestDto;
 import com.springboot.rest.dto.SettingResponseDto;
+import com.springboot.rest.dto.SettingSaveResponceDto;
 import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.dto.UserAmountSettingDto;
 import com.springboot.rest.dto.UserLineSettingDto;
+import com.springboot.rest.logic.FixAmountLogic;
 import com.springboot.rest.logic.UserAmountLogic;
 import com.springboot.rest.repository.AmountSettingRepository;
 import com.springboot.rest.repository.LineSettingRepository;
@@ -26,12 +30,16 @@ import com.springboot.rest.repository.LineSettingRepository;
 public class SettingService {
 
 	@Autowired
-	private AmountSettingRepository settingRepository;
+	private AmountSettingRepository amountSettingRepository;
 
 	@Autowired
-	private LineSettingRepository repository;
+	private LineSettingRepository lineSettingRepository;
+
 	@Autowired
 	private UserAmountLogic userAmountLogic;
+
+	@Autowired
+	private FixAmountLogic fixAmountLogic;
 
 	/**
 	 * Inital process.
@@ -40,7 +48,7 @@ public class SettingService {
 	 */
 	public SettingResponseDto init() throws Exception {
 		CustomUserDetails user = getUserInfo();
-		SettingResponseDto responseDto = new SettingResponseDto();
+		SettingResponseDto responceDto = new SettingResponseDto();
 		List<UserAmountSettingDto> userSettingList = getAmountSettingByUseid(user.getId());
 		List<UserLineSettingDto> lineList = getLineSettingByUserid(user.getId());
 
@@ -51,17 +59,20 @@ public class SettingService {
 
 		if (!CollectionUtils.isEmpty(lineList)) {
 			//ライン設定がある場合
-			responseDto.setLineSetting(lineList.get(0));
+			responceDto.setLineSetting(lineList.get(0));
 		}
 
 		if (CollectionUtils.isEmpty(userSettingList)) {
 			//ユーザ設定がされていない場合、ライン設定のみ返却
-			return responseDto;
+			return responceDto;
 		}
 		//今月のユーザ設定がある場合、レスポンスに設定の上返却
-		responseDto.setAmountSetting(userSettingList.get(0));
+		responceDto.setAmountSetting(userSettingList.get(0));
+		//固定収入固定支出の取得
+		responceDto.setFixIncomeAmount(fixAmountLogic.getFixIncome(user.getId()));
+		responceDto.setFixExpenditureAmount(fixAmountLogic.getFixExpenditure(user.getId()));
 
-		return responseDto;
+		return responceDto;
 
 	}
 
@@ -71,34 +82,92 @@ public class SettingService {
 	 * @param requestDto
 	 * @return HttpStatus list.
 	 */
-	public void saveAmountsetting(AmountSettingRequestDto requestDto) throws Exception {
+	public void saveAmountSetting(AmountSettingRequestDto requestDto) throws Exception {
 
 		CustomUserDetails user = getUserInfo();
+		int usableAmount = 0;
+		int fixAmount = fixAmountLogic.calculateFixAmount(user.getId());
+
+		//固定収入登録されていれば
+		//固定収入-固定支出-目標貯金額/月の日数
+		if (0 < fixAmount) {
+			usableAmount = (fixAmount - Integer.valueOf(requestDto.getGoalAmount())) / fixAmountLogic.getDays();
+		}
 
 		int judge = getAmountSettingByUseid(user.getId()).size();
 
 		if (judge < 1) {
 			//登録されていなかったら登録処理
-			registSetting(user.getId(), requestDto);
+			registSetting(user.getId(), requestDto, usableAmount);
 		} else if (judge > 2) {
 			//2レコード登録されていた場合はエラーを返す。（デッドコード）
 			throw new Exception();
 		} else {
 
-			System.out.println(updateSetting(user.getId(), requestDto));
+			updateSetting(user.getId(), requestDto, usableAmount);
 		}
 
 	}
 
 	/**
-	 * Regist line setting.
+	 * Regist fix amount setting.
 	 * 
 	 * @param requestDto
 	 * @return HttpStatus list.
 	 */
 	public void saveBalanceSetting(UserAmountRequestDto requestDto) throws Exception {
 
+		CustomUserDetails user = getUserInfo();
 		userAmountLogic.registUserAmount(requestDto);
+
+		//user_amount_settingの更新処理
+		//目標貯金額取得
+		List<UserAmountSettingDto> dtoList = getAmountSettingByUseid(user.getId());
+		int goalAmount = 0;
+		if (!CollectionUtils.isEmpty(dtoList)) {
+			goalAmount = dtoList.get(0).getSaveAmount();
+		}
+		//使用金額計算
+		int usableAmount = fixAmountLogic.getUsableAmount(user.getId(), goalAmount);
+
+		//更新処理
+		updateSetting(usableAmount, goalAmount);
+	}
+
+	/**
+	 * 
+	 * 
+	 * @param goalAmount
+	 * @param usableAmount
+	 */
+	public void updateSetting(int goalAmount, int usableAmount) throws Exception {
+
+		CustomUserDetails user = getUserInfo();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
+		Date date = new Date();
+
+		int result = amountSettingRepository.update(String.valueOf(user.getId()), sdf.format(date).toString(),
+				String.valueOf(usableAmount), String.valueOf(goalAmount), CreateDate.getNowDateTime());
+
+		if (result < 1) {
+			new Exception();
+		}
+
+	}
+
+	/**
+	 * Get fixed balance amount
+	 * 
+	 * @return
+	 */
+	public SettingSaveResponceDto getFixBalance() {
+		SettingSaveResponceDto responceDto = new SettingSaveResponceDto();
+		CustomUserDetails user = getUserInfo();
+		responceDto.setFixIncomeAmount(fixAmountLogic.getFixIncome(user.getId()));
+		responceDto.setFixExpenditureAmount(fixAmountLogic.getFixExpenditure(user.getId()));
+
+		return responceDto;
 
 	}
 
@@ -148,7 +217,7 @@ public class SettingService {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
 		Date date = new Date();
 
-		settingRepository.findByUseidAndMonth(String.valueOf(userId), sdf.format(date).toString())
+		amountSettingRepository.findByUseidAndMonth(String.valueOf(userId), sdf.format(date).toString())
 				.stream()
 				.forEach(e -> {
 					UserAmountSettingDto responseDto = new UserAmountSettingDto();
@@ -156,8 +225,6 @@ public class SettingService {
 					responseDto.setUserId(e.getUserId());
 					responseDto.setMonthYear(e.getMonthYear());
 					responseDto.setSaveAmount(e.getSaveAmount());
-					responseDto.setFixedIncome(e.getFixedIncome());
-					responseDto.setFixedExpenditure(e.getFixedExpenditure());
 					responseDtoList.add(responseDto);
 				});
 
@@ -170,17 +237,19 @@ public class SettingService {
 	 * 
 	 * @return
 	 */
-	public boolean registSetting(long userId, AmountSettingRequestDto requestDto) {
+	@Transactional(rollbackFor = Exception.class)
+	public boolean registSetting(long userId, AmountSettingRequestDto requestDto, int usableAmount)
+			throws SQLException {
 
-		//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
-		//		Date date = new Date();
-		//		int result = settingRepository.insert(String.valueOf(userId), sdf.format(date).toString(),
-		//				requestDto.getGoalAmount(), requestDto.getFixIncome(), requestDto.getFixExpenditure(),
-		//				CreateDate.getNowDateTime(), CreateDate.getNowDateTime());
-		//
-		//		if (result < 1) {
-		//			return false;
-		//		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
+		Date date = new Date();
+		int result = amountSettingRepository.insert(String.valueOf(userId), sdf.format(date).toString(),
+				requestDto.getGoalAmount(), String.valueOf(usableAmount),
+				CreateDate.getNowDateTime(), CreateDate.getNowDateTime());
+
+		if (result < 1) {
+			return false;
+		}
 
 		return true;
 	}
@@ -190,15 +259,17 @@ public class SettingService {
 	 * 
 	 * @return
 	 */
-	public boolean updateSetting(long userId, AmountSettingRequestDto requestDto) {
+	@Transactional(rollbackFor = Exception.class)
+	public boolean updateSetting(long userId, AmountSettingRequestDto requestDto, int usableAmount)
+			throws SQLException {
 
-		//		int result = settingRepository.update(String.valueOf(userId), CreateDate.getNowDate().substring(0, 7),
-		//				requestDto.getGoalAmount(), requestDto.getFixIncome(), requestDto.getFixExpenditure(),
-		//				CreateDate.getNowDateTime());
-		//
-		//		if (result < 1) {
-		//			return false;
-		//		}
+		int result = amountSettingRepository.update(String.valueOf(userId), CreateDate.getNowDate().substring(0, 7),
+				requestDto.getGoalAmount(), String.valueOf(usableAmount),
+				CreateDate.getNowDateTime());
+
+		if (result < 1) {
+			return false;
+		}
 		return true;
 	}
 
@@ -212,7 +283,7 @@ public class SettingService {
 
 		List<UserLineSettingDto> responseDtoList = new ArrayList<>();
 
-		repository.findAllByUserid(String.valueOf(userId)).stream().forEach(e -> {
+		lineSettingRepository.findAllByUserid(String.valueOf(userId)).stream().forEach(e -> {
 			UserLineSettingDto responseDto = new UserLineSettingDto();
 			responseDto.setId(e.getId());
 			responseDto.setUserId(e.getUserId());
@@ -237,7 +308,7 @@ public class SettingService {
 	 */
 	public boolean regist(long userId, LineSettingRequestDto requestDto) {
 
-		repository.insert(String.valueOf(userId), requestDto.getLineFlg(), requestDto.getAccessToken(),
+		lineSettingRepository.insert(String.valueOf(userId), requestDto.getLineFlg(), requestDto.getAccessToken(),
 				CreateDate.getNowDateTime(), CreateDate.getNowDateTime());
 
 		return false;
@@ -253,9 +324,10 @@ public class SettingService {
 	 */
 	public boolean updateLineSetting(long userId, LineSettingRequestDto requestDto) {
 
-		repository.update(requestDto.getLineFlg(), requestDto.getAccessToken(), CreateDate.getNowDateTime(),
+		lineSettingRepository.update(requestDto.getLineFlg(), requestDto.getAccessToken(), CreateDate.getNowDateTime(),
 				String.valueOf(userId));
 
 		return false;
 	}
+
 }

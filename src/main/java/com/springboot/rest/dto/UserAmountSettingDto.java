@@ -10,9 +10,7 @@ public class UserAmountSettingDto {
 
 	private int saveAmount;
 
-	private int fixedIncome;
-
-	private int fixedExpenditure;
+	private int usableAmount;
 
 	public long getId() {
 		return id;
@@ -46,20 +44,12 @@ public class UserAmountSettingDto {
 		this.saveAmount = saveAmount;
 	}
 
-	public int getFixedIncome() {
-		return fixedIncome;
+	public int getUsableAmount() {
+		return usableAmount;
 	}
 
-	public void setFixedIncome(int fixedIncome) {
-		this.fixedIncome = fixedIncome;
-	}
-
-	public int getFixedExpenditure() {
-		return fixedExpenditure;
-	}
-
-	public void setFixedExpenditure(int fixedExpenditure) {
-		this.fixedExpenditure = fixedExpenditure;
+	public void setUsableAmount(int usableAmount) {
+		this.usableAmount = usableAmount;
 	}
 
 }

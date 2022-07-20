@@ -8,6 +8,10 @@ public class UserAmountDto {
 
 	private String categoryCode;
 
+	private String fixFlg;
+
+	private String balanceName;
+
 	private String yearMonth;
 
 	private String date;
@@ -42,6 +46,22 @@ public class UserAmountDto {
 
 	public void setCategoryCode(String categoryCode) {
 		this.categoryCode = categoryCode;
+	}
+
+	public String getFixFlg() {
+		return fixFlg;
+	}
+
+	public void setFixFlg(String fixFlg) {
+		this.fixFlg = fixFlg;
+	}
+
+	public String getBalanceName() {
+		return balanceName;
+	}
+
+	public void setBalanceName(String balanceName) {
+		this.balanceName = balanceName;
 	}
 
 	public String getYearMonth() {

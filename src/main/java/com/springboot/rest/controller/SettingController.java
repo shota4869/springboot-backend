@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.springboot.rest.dto.AmountSettingRequestDto;
 import com.springboot.rest.dto.LineSettingRequestDto;
 import com.springboot.rest.dto.SettingResponseDto;
+import com.springboot.rest.dto.SettingSaveResponceDto;
 import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.service.SettingService;
 
@@ -40,7 +41,7 @@ public class SettingController {
 	}
 
 	/**
-	 * Regist fixed amount setting.
+	 * Regist save amount setting.
 	 * 
 	 * @param requestDto
 	 * @return HttpStatus list.
@@ -48,7 +49,7 @@ public class SettingController {
 	@PostMapping("/amount")
 	public ResponseEntity<HttpStatus> saveAmountsetting(@RequestBody AmountSettingRequestDto requestDto) {
 		try {
-			settingService.saveAmountsetting(requestDto);
+			settingService.saveAmountSetting(requestDto);
 			return new ResponseEntity<>(HttpStatus.OK);
 
 		} catch (Exception e) {
@@ -57,16 +58,16 @@ public class SettingController {
 	}
 
 	/**
-	 * Regist line setting.
+	 * Regist fixed balance setting.
 	 * 
 	 * @param requestDto
 	 * @return HttpStatus list.
 	 */
 	@PostMapping("/balance")
-	public ResponseEntity<HttpStatus> saveBalanceSetting(@RequestBody UserAmountRequestDto requestDto) {
+	public ResponseEntity<SettingSaveResponceDto> saveBalanceSetting(@RequestBody UserAmountRequestDto requestDto) {
 		try {
 			settingService.saveBalanceSetting(requestDto);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<SettingSaveResponceDto>(settingService.getFixBalance(), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}

@@ -30,10 +30,10 @@ public class BalanceListController {
 	 * @return
 	 */
 	@PostMapping
-	public ResponseEntity<BalanceListInitResponceDto> init(@RequestBody BalanceListRequestDto balanceListRequestDto) {
+	public ResponseEntity<BalanceListInitResponceDto> init(@RequestBody BalanceListRequestDto requestDto) {
 
 		try {
-			return ResponseEntity.ok(balanceListService.findBalanceList(balanceListRequestDto.getDate()));
+			return ResponseEntity.ok(balanceListService.init(requestDto));
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
@@ -50,6 +50,16 @@ public class BalanceListController {
 	public ResponseEntity<HttpStatus> deleteBalance(@PathVariable String id) {
 		try {
 			balanceListService.delete(id);
+			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<HttpStatus>(HttpStatus.CONFLICT);
+		}
+	}
+
+	@PostMapping("/update")
+	public ResponseEntity<HttpStatus> updateFixedBalance(@RequestBody String fixFlg) {
+		try {
+			balanceListService.calculateUsableAmount(fixFlg);
 			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<HttpStatus>(HttpStatus.CONFLICT);

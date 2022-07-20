@@ -18,4 +18,10 @@ public class CreateDate {
 		return df.format(date);
 	}
 
+	public static String getMonth() {
+		final DateFormat df = new SimpleDateFormat("yyyy/MM");
+		final Date date = new Date(System.currentTimeMillis());
+		return df.format(date);
+	}
+
 }

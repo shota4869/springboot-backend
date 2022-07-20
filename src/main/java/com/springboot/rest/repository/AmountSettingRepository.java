@@ -12,15 +12,14 @@ import com.springboot.rest.Entity.AmountSettingEntity;
 @Mapper
 public interface AmountSettingRepository {
 
-	@Select("SElECT id, user_id, month_year,save_amount, fixed_income, fixed_expenditure FROM user_amount_setting where user_id = #{userId} AND month_year = #{month}")
+	@Select("SELECT id, user_id, month_year,save_amount ,usable_amount  FROM user_amount_setting2 where user_id = #{userId} AND month_year = #{month}")
 	List<AmountSettingEntity> findByUseidAndMonth(String userId, String month);
 
-	@Insert("INSERT INTO user_amount_setting"
+	@Insert("INSERT INTO user_amount_setting2 "
 			+ "(user_id,"
 			+ "month_year,"
 			+ "save_amount,"
-			+ "fixed_income,"
-			+ "fixed_expenditure,"
+			+ "usable_amount,"
 			+ "create_at,"
 			+ "update_at)"
 			+ "VALUES"
@@ -28,24 +27,22 @@ public interface AmountSettingRepository {
 			+ "#{userId},"
 			+ "#{month},"
 			+ "#{saveAmount},"
-			+ "#{fixedIncome},"
-			+ "#{fixedExpenditure},"
+			+ "#{usableAmount},"
 			+ "#{create},"
 			+ "#{update});")
-	int insert(String userId, String month, String saveAmount, String fixedIncome, String fixedExpenditure,
+	int insert(String userId, String month, String saveAmount, String usableAmount,
 			String create, String update);
 
-	@Update("UPDATE user_amount_setting "
+	@Update("UPDATE user_amount_setting2 "
 			+ "SET "
 			+ "save_amount = #{saveAmount}, "
-			+ "fixed_income = #{fixedIncome}, "
-			+ "fixed_expenditure = #{fixedExpenditure}, "
+			+ "usable_amount = #{usableAmount}, "
 			+ "update_at = #{update} "
 			+ "WHERE "
 			+ "user_id = #{userId} "
 			+ "and "
 			+ "month_year = #{month};")
-	int update(String userId, String month, String saveAmount, String fixedIncome, String fixedExpenditure,
+	int update(String userId, String month, String saveAmount, String usableAmount,
 			String update);
 
 }

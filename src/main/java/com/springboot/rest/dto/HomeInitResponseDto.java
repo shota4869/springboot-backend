@@ -9,9 +9,17 @@ public class HomeInitResponseDto implements Serializable {
 
 	private List<CategoryDto> expenditureCategory;
 
+	private int fixIncome;
+
+	private int fixExpenditure;
+
 	private int saveAmount;
 
 	private int usableAmount;
+
+	private int balanceAmount;
+
+	private int restUsableAmount;
 
 	public List<CategoryDto> getIncomeCategory() {
 		return incomeCategory;
@@ -29,6 +37,22 @@ public class HomeInitResponseDto implements Serializable {
 		this.expenditureCategory = expenditureCategory;
 	}
 
+	public int getFixIncome() {
+		return fixIncome;
+	}
+
+	public void setFixIncome(int fixIncome) {
+		this.fixIncome = fixIncome;
+	}
+
+	public int getFixExpenditure() {
+		return fixExpenditure;
+	}
+
+	public void setFixExpenditure(int fixExpenditure) {
+		this.fixExpenditure = fixExpenditure;
+	}
+
 	public int getSaveAmount() {
 		return saveAmount;
 	}
@@ -43,6 +67,22 @@ public class HomeInitResponseDto implements Serializable {
 
 	public void setUsableAmount(int usableAmount) {
 		this.usableAmount = usableAmount;
+	}
+
+	public int getBalanceAmount() {
+		return balanceAmount;
+	}
+
+	public void setBalanceAmount(int balanceAmount) {
+		this.balanceAmount = balanceAmount;
+	}
+
+	public int getRestUsableAmount() {
+		return restUsableAmount;
+	}
+
+	public void setRestUsableAmount(int restUsableAmount) {
+		this.restUsableAmount = restUsableAmount;
 	}
 
 }

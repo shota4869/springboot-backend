@@ -23,11 +23,8 @@ public class AmountSettingEntity {
 	@Column(name = "save_amount")
 	private int saveAmount;
 
-	@Column(name = "fixed_income")
-	private int fixedIncome;
-
-	@Column(name = "fixed_expenditure")
-	private int fixedExpenditure;
+	@Column(name = "usable_amount")
+	private int usableAmount;
 
 	public long getId() {
 		return id;
@@ -61,20 +58,11 @@ public class AmountSettingEntity {
 		this.saveAmount = saveAmount;
 	}
 
-	public int getFixedIncome() {
-		return fixedIncome;
+	public int getUsableAmount() {
+		return usableAmount;
 	}
 
-	public void setFixedIncome(int fixedIncome) {
-		this.fixedIncome = fixedIncome;
+	public void setUsableAmount(int usableAmount) {
+		this.usableAmount = usableAmount;
 	}
-
-	public int getFixedExpenditure() {
-		return fixedExpenditure;
-	}
-
-	public void setFixedExpenditure(int fixedExpenditure) {
-		this.fixedExpenditure = fixedExpenditure;
-	}
-
 }

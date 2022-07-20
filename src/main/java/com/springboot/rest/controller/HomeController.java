@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.rest.dto.HomeInitResponseDto;
+import com.springboot.rest.dto.HomeSaveResponceDto;
 import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.service.HomeService;
 
@@ -32,19 +33,13 @@ public class HomeController {
 	@GetMapping
 	public ResponseEntity<HomeInitResponseDto> init() {
 
-		HomeInitResponseDto dto = homeService.findCategory();
-
 		try {
-			dto.setSaveAmount(homeService.getSaveAmount());
-			dto.setUsableAmount(homeService.findUsableAmount());
-			return ResponseEntity.ok(dto);
+			return ResponseEntity.ok(homeService.init());
 		} catch (RuntimeException e) {
 
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
-		} catch (SQLException e) {
-			// TODO 自動生成された catch ブロック
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
+
 	}
 
 	/**
@@ -54,15 +49,15 @@ public class HomeController {
 	 * @return
 	 */
 	@PostMapping("/save")
-	public ResponseEntity<Integer> saveBalance(@RequestBody UserAmountRequestDto userAmountDto) {
+	public ResponseEntity<HomeSaveResponceDto> saveBalance(@RequestBody UserAmountRequestDto userAmountDto) {
 		try {
 			homeService.registUserAmount(userAmountDto);
-			return new ResponseEntity<Integer>(homeService.saveAmountCalculete(), HttpStatus.OK);
+			return new ResponseEntity<HomeSaveResponceDto>(homeService.saveAmountCalculete(), HttpStatus.OK);
 		} catch (RuntimeException e) {
-			return new ResponseEntity<Integer>(HttpStatus.CONFLICT);
+			return new ResponseEntity<HomeSaveResponceDto>(HttpStatus.CONFLICT);
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
-			return new ResponseEntity<Integer>(HttpStatus.CONFLICT);
+			return new ResponseEntity<HomeSaveResponceDto>(HttpStatus.CONFLICT);
 		}
 	}
 }

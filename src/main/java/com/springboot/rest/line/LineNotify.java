@@ -8,8 +8,6 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,8 +19,8 @@ import org.springframework.util.CollectionUtils;
 import com.springboot.rest.Entity.AmountSettingEntity;
 import com.springboot.rest.Entity.LineSettingEntity;
 import com.springboot.rest.date.CreateDate;
-import com.springboot.rest.dto.UsableAmountDto;
-import com.springboot.rest.logic.UsableAmountLogic;
+import com.springboot.rest.logic.CalculateBalanceLogic;
+import com.springboot.rest.logic.FixAmountLogic;
 import com.springboot.rest.repository.AmountSettingRepository;
 import com.springboot.rest.repository.LineSettingRepository;
 
@@ -30,18 +28,24 @@ import com.springboot.rest.repository.LineSettingRepository;
 public class LineNotify {
 
 	@Autowired
-	private UsableAmountLogic usableAmountLogic;
-
-	@Autowired
 	private LineSettingRepository lineSettingRepository;
 
 	@Autowired
 	private AmountSettingRepository amountSettingRepository;
 
+	@Autowired
+	private CalculateBalanceLogic calculateBalanceLogic;
+
+	@Autowired
+	private FixAmountLogic fixAmountLogic;
+
 	private final String DEFALT_MESSAGE = "今日も1日頑張れ、いいことあるぞ";
+
+	final int time = 9;
 
 	@Scheduled(cron = "0 0 * * * *", zone = "Asia/Tokyo")
 	public void executeNotification() {
+		StringBuilder sb = new StringBuilder();
 		String message = null;
 		//user_line_settingからライン連携フラグが1のデータを取得
 		List<LineSettingEntity> entityList = lineSettingRepository.findAll();
@@ -53,27 +57,49 @@ public class LineNotify {
 
 		//上記データのuserId毎に繰り返す。
 		for (LineSettingEntity entity : entityList) {
-			//目標貯金額と固定収入が設定されていなかったらデフォルトのメッセージ
-			//user_amount_settingから取得
-			List<UsableAmountDto> dtoList = new ArrayList<>();
-			try {
-				dtoList = usableAmountLogic.commonProcess(entity.getUserId());
-			} catch (SQLException e) {
-				return;
-			}
-			int usableAmount = 0;
-			if (!CollectionUtils.isEmpty(dtoList)) {
-				usableAmount = dtoList.get(0).getUsableAmount();
-			}
-
-			message = "本日使用できる金額は" + String.format("%,d", usableAmount) + "円です。";
-
+			//目標貯金額取得
 			List<AmountSettingEntity> amountSettingEntityList = amountSettingRepository
 					.findByUseidAndMonth(String.valueOf(entity.getUserId()), CreateDate.getNowDate().substring(0, 7));
 
 			if (amountSettingEntityList.size() < 1) {
 				//目標金額設定がない場合デフォルトメッセージ設定
 				message = DEFALT_MESSAGE;
+			} else {
+				//目標貯金額が設定されている場合
+				int resultBalance = fixAmountLogic.getUsableAmount(entity.getUserId(),
+						amountSettingEntityList.get(0).getSaveAmount())
+						+ calculateBalanceLogic.getPreviousDaybalanceCalculete(entity.getUserId());
+				if (0 < fixAmountLogic.getFixIncome(entity.getUserId())) {
+					//固定収入が入力されてない場合
+					sb.append("\r・1日に使える金額：");
+					sb.append("\r");
+					sb.append(String.format("%,d", fixAmountLogic.getUsableAmount(entity.getUserId(),
+							amountSettingEntityList.get(0).getSaveAmount())));
+					sb.append("円");
+				}
+				sb.append("\r・昨日の収入：");
+				sb.append("\r");
+				sb.append(String.format("%,d", calculateBalanceLogic.getPreviousDayIncomeAmount(entity.getUserId())));
+				sb.append("円");
+				sb.append("\r・昨日の支出：");
+				sb.append("\r");
+				sb.append(String.format("%,d",
+						calculateBalanceLogic.getPreviousDayExpenditureAmount(entity.getUserId())));
+				sb.append("円");
+				sb.append("\r・昨日の収支：");
+				sb.append("\r");
+				sb.append(
+						String.format("%,d", calculateBalanceLogic.getPreviousDaybalanceCalculete(entity.getUserId())));
+				sb.append("円");
+				sb.append("\r・昨日の結果：");
+				sb.append("\r");
+				if (0 < resultBalance) {
+					sb.append("+");
+				}
+				sb.append(String.format("%,d", resultBalance));
+				sb.append("円");
+
+				message = sb.toString();
 			}
 
 			//アクセストークンを設定
@@ -109,6 +135,7 @@ public class LineNotify {
 			}
 		} catch (Exception e) {
 			System.out.println("なんか失敗したっぽい2");
+
 		} finally {
 			if (connection != null) {
 				connection.disconnect();
