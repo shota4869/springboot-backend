@@ -22,6 +22,7 @@ import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.dto.UserAmountSettingDto;
 import com.springboot.rest.dto.UserLineSettingDto;
 import com.springboot.rest.logic.FixAmountLogic;
+import com.springboot.rest.logic.UsableAmountLogic;
 import com.springboot.rest.logic.UserAmountLogic;
 import com.springboot.rest.repository.AmountSettingRepository;
 import com.springboot.rest.repository.LineSettingRepository;
@@ -41,6 +42,9 @@ public class SettingService {
 	@Autowired
 	private FixAmountLogic fixAmountLogic;
 
+	@Autowired
+	private UsableAmountLogic usableAmountLogic;
+
 	/**
 	 * Inital process.
 	 * 
@@ -49,7 +53,7 @@ public class SettingService {
 	public SettingResponseDto init() throws Exception {
 		CustomUserDetails user = getUserInfo();
 		SettingResponseDto responceDto = new SettingResponseDto();
-		List<UserAmountSettingDto> userSettingList = getAmountSettingByUseid(user.getId());
+		List<UserAmountSettingDto> userSettingList = usableAmountLogic.getAmountSettingByUseid(user.getId());
 		List<UserLineSettingDto> lineList = getLineSettingByUserid(user.getId());
 
 		if (userSettingList.size() > 2 || lineList.size() > 2) {
@@ -94,7 +98,7 @@ public class SettingService {
 			usableAmount = (fixAmount - Integer.valueOf(requestDto.getGoalAmount())) / fixAmountLogic.getDays();
 		}
 
-		int judge = getAmountSettingByUseid(user.getId()).size();
+		int judge = usableAmountLogic.getAmountSettingByUseid(user.getId()).size();
 
 		if (judge < 1) {
 			//登録されていなかったら登録処理
@@ -122,7 +126,7 @@ public class SettingService {
 
 		//user_amount_settingの更新処理
 		//目標貯金額取得
-		List<UserAmountSettingDto> dtoList = getAmountSettingByUseid(user.getId());
+		List<UserAmountSettingDto> dtoList = usableAmountLogic.getAmountSettingByUseid(user.getId());
 		int goalAmount = 0;
 		if (!CollectionUtils.isEmpty(dtoList)) {
 			goalAmount = dtoList.get(0).getSaveAmount();
@@ -131,29 +135,7 @@ public class SettingService {
 		int usableAmount = fixAmountLogic.getUsableAmount(user.getId(), goalAmount);
 
 		//更新処理
-		updateSetting(usableAmount, goalAmount);
-	}
-
-	/**
-	 * 
-	 * 
-	 * @param goalAmount
-	 * @param usableAmount
-	 */
-	public void updateSetting(int goalAmount, int usableAmount) throws Exception {
-
-		CustomUserDetails user = getUserInfo();
-
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
-		Date date = new Date();
-
-		int result = amountSettingRepository.update(String.valueOf(user.getId()), sdf.format(date).toString(),
-				String.valueOf(usableAmount), String.valueOf(goalAmount), CreateDate.getNowDateTime());
-
-		if (result < 1) {
-			new Exception();
-		}
-
+		usableAmountLogic.updateSetting(usableAmount, goalAmount);
 	}
 
 	/**
@@ -204,32 +186,6 @@ public class SettingService {
 	private CustomUserDetails getUserInfo() {
 		return (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();
-	}
-
-	/**
-	 * select setting.
-	 * 
-	 * @return
-	 */
-	public List<UserAmountSettingDto> getAmountSettingByUseid(long userId) {
-
-		List<UserAmountSettingDto> responseDtoList = new ArrayList<>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
-		Date date = new Date();
-
-		amountSettingRepository.findByUseidAndMonth(String.valueOf(userId), sdf.format(date).toString())
-				.stream()
-				.forEach(e -> {
-					UserAmountSettingDto responseDto = new UserAmountSettingDto();
-					responseDto.setId(e.getId());
-					responseDto.setUserId(e.getUserId());
-					responseDto.setMonthYear(e.getMonthYear());
-					responseDto.setSaveAmount(e.getSaveAmount());
-					responseDtoList.add(responseDto);
-				});
-
-		return responseDtoList;
-
 	}
 
 	/**

@@ -13,6 +13,7 @@ import org.springframework.util.CollectionUtils;
 
 import com.springboot.rest.Entity.MCategoryEntity;
 import com.springboot.rest.auth.CustomUserDetails;
+import com.springboot.rest.common.BalanceFlag;
 import com.springboot.rest.dto.CategoryDto;
 import com.springboot.rest.dto.HomeInitResponseDto;
 import com.springboot.rest.dto.HomeSaveResponceDto;
@@ -46,7 +47,7 @@ public class HomeService {
 		List<MCategoryEntity> targetList = findCategory();
 		List<CategoryDto> incomeCategoryList = new ArrayList<CategoryDto>();
 		List<CategoryDto> expenditureCategoryList = new ArrayList<CategoryDto>();
-		targetList.stream().filter(e -> "0".equals(e.getBalanceFlg()))
+		targetList.stream().filter(e -> BalanceFlag.INCOME.getCode().equals(e.getBalanceFlg()))
 				.forEach(item -> {
 					CategoryDto categoryDto = new CategoryDto();
 					categoryDto.setId(item.getId());
@@ -56,7 +57,7 @@ public class HomeService {
 					incomeCategoryList.add(categoryDto);
 				});
 
-		targetList.stream().filter(e -> "1".equals(e.getBalanceFlg()))
+		targetList.stream().filter(e -> BalanceFlag.EXPENDTURE.getCode().equals(e.getBalanceFlg()))
 				.forEach(item -> {
 					CategoryDto categoryDto = new CategoryDto();
 					categoryDto.setId(item.getId());

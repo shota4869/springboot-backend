@@ -12,6 +12,8 @@ import org.springframework.util.CollectionUtils;
 
 import com.springboot.rest.Entity.UserAmountAndMCategoryJoinEntity;
 import com.springboot.rest.auth.CustomUserDetails;
+import com.springboot.rest.common.BalanceFlag;
+import com.springboot.rest.common.FixFlag;
 import com.springboot.rest.dto.BalanceListInitResponceDto;
 import com.springboot.rest.dto.BalanceListRequestDto;
 import com.springboot.rest.dto.UserAmountDto;
@@ -63,7 +65,7 @@ public class BalanceListService {
 				requestDto.getDate());
 
 		entity.stream()
-				.filter(e -> "0".equals(e.getBalanceFlg()))
+				.filter(e -> BalanceFlag.INCOME.getCode().equals(e.getBalanceFlg()))
 				.forEach(e -> {
 					UserAmountDto userAmountDto = new UserAmountDto();
 					userAmountDto.setId(e.getId());
@@ -81,7 +83,7 @@ public class BalanceListService {
 				});
 
 		entity.stream()
-				.filter(e -> "1".equals(e.getBalanceFlg()))
+				.filter(e -> BalanceFlag.EXPENDTURE.getCode().equals(e.getBalanceFlg()))
 				.forEach(e -> {
 					UserAmountDto userAmountDto = new UserAmountDto();
 					userAmountDto.setId(e.getId());
@@ -123,7 +125,7 @@ public class BalanceListService {
 				requestDto.getMonth());
 
 		entity.stream()
-				.filter(e -> "0".equals(e.getBalanceFlg()))
+				.filter(e -> BalanceFlag.INCOME.getCode().equals(e.getBalanceFlg()))
 				.forEach(e -> {
 					UserAmountDto userAmountDto = new UserAmountDto();
 					userAmountDto.setId(e.getId());
@@ -141,7 +143,7 @@ public class BalanceListService {
 				});
 
 		entity.stream()
-				.filter(e -> "1".equals(e.getBalanceFlg()))
+				.filter(e -> BalanceFlag.EXPENDTURE.getCode().equals(e.getBalanceFlg()))
 				.forEach(e -> {
 					UserAmountDto userAmountDto = new UserAmountDto();
 					userAmountDto.setId(e.getId());
@@ -182,7 +184,7 @@ public class BalanceListService {
 
 	public void calculateUsableAmount(String fixFlg) throws Exception {
 
-		if ("0".equals(fixFlg)) {
+		if (FixFlag.NORMAL.getCode().equals(fixFlg)) {
 			return;
 		}
 

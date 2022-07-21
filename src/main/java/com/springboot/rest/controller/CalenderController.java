@@ -27,7 +27,7 @@ public class CalenderController {
 	@GetMapping
 	public ResponseEntity<CalenderInitResponseDto> init() {
 		try {
-			return ResponseEntity.ok(calenderService.getCallenderList());
+			return ResponseEntity.ok(calenderService.init());
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}

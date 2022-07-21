@@ -12,10 +12,10 @@ import com.springboot.rest.Entity.AmountSettingEntity;
 @Mapper
 public interface AmountSettingRepository {
 
-	@Select("SELECT id, user_id, month_year,save_amount ,usable_amount  FROM user_amount_setting2 where user_id = #{userId} AND month_year = #{month}")
+	@Select("SELECT id, user_id, month_year,save_amount ,usable_amount  FROM user_amount_setting where user_id = #{userId} AND month_year = #{month}")
 	List<AmountSettingEntity> findByUseidAndMonth(String userId, String month);
 
-	@Insert("INSERT INTO user_amount_setting2 "
+	@Insert("INSERT INTO user_amount_setting "
 			+ "(user_id,"
 			+ "month_year,"
 			+ "save_amount,"
@@ -33,7 +33,7 @@ public interface AmountSettingRepository {
 	int insert(String userId, String month, String saveAmount, String usableAmount,
 			String create, String update);
 
-	@Update("UPDATE user_amount_setting2 "
+	@Update("UPDATE user_amount_setting "
 			+ "SET "
 			+ "save_amount = #{saveAmount}, "
 			+ "usable_amount = #{usableAmount}, "

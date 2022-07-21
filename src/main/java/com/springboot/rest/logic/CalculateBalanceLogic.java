@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.springboot.rest.common.BalanceFlag;
+import com.springboot.rest.common.FixFlag;
 import com.springboot.rest.date.CreateDate;
 import com.springboot.rest.repository.UserAmountRepository;
 
@@ -27,7 +29,8 @@ public class CalculateBalanceLogic {
 		//本日の収入リスト
 		List<Integer> incomeAmountList = userAmountRepository
 				.findAllByUserId(String.valueOf(userId), CreateDate.getNowDate()).stream()
-				.filter(e -> "0".equals(e.getBalanceFlg())).filter(e -> "0".equals(e.getFixFlg()))
+				.filter(e -> BalanceFlag.INCOME.getCode().equals(e.getBalanceFlg()))
+				.filter(e -> FixFlag.NORMAL.getCode().equals(e.getFixFlg()))
 				.map(e -> e.getAmount()).collect(Collectors.toList());
 
 		return incomeAmountList.stream().mapToInt(Integer::intValue).sum();
@@ -37,7 +40,8 @@ public class CalculateBalanceLogic {
 		//本日の支出リスト
 		List<Integer> expenditureAmountList = userAmountRepository
 				.findAllByUserId(String.valueOf(userId), CreateDate.getNowDate()).stream()
-				.filter(e -> "1".equals(e.getBalanceFlg())).filter(e -> "0".equals(e.getFixFlg()))
+				.filter(e -> BalanceFlag.EXPENDTURE.getCode().equals(e.getBalanceFlg()))
+				.filter(e -> FixFlag.NORMAL.getCode().equals(e.getFixFlg()))
 				.map(e -> e.getAmount()).collect(Collectors.toList());
 
 		return expenditureAmountList.stream().mapToInt(Integer::intValue).sum();
@@ -57,7 +61,8 @@ public class CalculateBalanceLogic {
 		//昨日の収入リスト
 		List<Integer> incomeAmountList = userAmountRepository
 				.findAllByUserId(String.valueOf(userId), strPreviousDate).stream()
-				.filter(e -> "0".equals(e.getBalanceFlg())).filter(e -> "0".equals(e.getFixFlg()))
+				.filter(e -> BalanceFlag.INCOME.getCode().equals(e.getBalanceFlg()))
+				.filter(e -> FixFlag.NORMAL.getCode().equals(e.getFixFlg()))
 				.map(e -> e.getAmount()).collect(Collectors.toList());
 
 		return incomeAmountList.stream().mapToInt(Integer::intValue).sum();
@@ -71,11 +76,11 @@ public class CalculateBalanceLogic {
 
 		String strPreviousDate = new SimpleDateFormat("yyyy/MM/dd").format(cal.getTime());
 
-		System.out.println(strPreviousDate);
 		//本日の支出リスト
 		List<Integer> expenditureAmountList = userAmountRepository
 				.findAllByUserId(String.valueOf(userId), strPreviousDate).stream()
-				.filter(e -> "1".equals(e.getBalanceFlg())).filter(e -> "0".equals(e.getFixFlg()))
+				.filter(e -> BalanceFlag.EXPENDTURE.getCode().equals(e.getBalanceFlg()))
+				.filter(e -> FixFlag.NORMAL.getCode().equals(e.getFixFlg()))
 				.map(e -> e.getAmount()).collect(Collectors.toList());
 
 		return expenditureAmountList.stream().mapToInt(Integer::intValue).sum();

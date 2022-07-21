@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.springboot.rest.common.BalanceFlag;
+import com.springboot.rest.common.FixFlag;
 import com.springboot.rest.date.CreateDate;
 import com.springboot.rest.repository.UserAmountRepository;
 
@@ -52,7 +54,8 @@ public class FixAmountLogic {
 		//固定収入
 		List<Integer> incomeAmountList = userAmountRepository
 				.findAllByUserIdAndMonth(String.valueOf(userId), CreateDate.getNowDate().substring(0, 7)).stream()
-				.filter(e -> "0".equals(e.getBalanceFlg())).filter(e -> "1".equals(e.getFixFlg()))
+				.filter(e -> BalanceFlag.INCOME.getCode().equals(e.getBalanceFlg()))
+				.filter(e -> FixFlag.FIXED.getCode().equals(e.getFixFlg()))
 				.map(e -> e.getAmount()).collect(Collectors.toList());
 
 		//収入合計
@@ -65,7 +68,8 @@ public class FixAmountLogic {
 
 		List<Integer> expenditureAmountList = userAmountRepository
 				.findAllByUserIdAndMonth(String.valueOf(userId), CreateDate.getNowDate().substring(0, 7)).stream()
-				.filter(e -> "1".equals(e.getBalanceFlg())).filter(e -> "1".equals(e.getFixFlg()))
+				.filter(e -> BalanceFlag.EXPENDTURE.getCode().equals(e.getBalanceFlg()))
+				.filter(e -> FixFlag.FIXED.getCode().equals(e.getFixFlg()))
 				.map(e -> e.getAmount()).collect(Collectors.toList());
 		//支出合計
 		int totalExpenditure = expenditureAmountList.stream().mapToInt(Integer::intValue).sum();

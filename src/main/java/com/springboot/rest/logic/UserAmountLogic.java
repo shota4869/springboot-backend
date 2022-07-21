@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.springboot.rest.auth.CustomUserDetails;
+import com.springboot.rest.common.FixFlag;
 import com.springboot.rest.date.CreateDate;
 import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.repository.UserAmountRepository;
@@ -29,7 +30,7 @@ public class UserAmountLogic {
 
 		String balanceName = "";
 
-		if ("1".equals(userAmountDto.getFixFlg())) {
+		if (FixFlag.FIXED.getCode().equals(userAmountDto.getFixFlg())) {
 			balanceName = "固定";
 		}
 
