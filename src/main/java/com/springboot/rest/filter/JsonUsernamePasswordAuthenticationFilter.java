@@ -26,7 +26,7 @@ public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthentica
 	String passwordParameter = "password";
 
 	public JsonUsernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager) {
-		super(new AntPathRequestMatcher("/login", "POST"));
+		super(new AntPathRequestMatcher("/api/login", "POST"));
 		this.setAuthenticationManager(authenticationManager);
 	}
 
@@ -73,11 +73,12 @@ public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthentica
 		authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
 
 		//CORSポリシーのエラー対策
-		//		response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-		//		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE");
-		response.setHeader("Access-Control-Allow-Credentials", "true");
+		response.setHeader("Access-Control-Allow-Origin", "http://localhost");
+		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE");
+		response.setHeader("Access-Control-Allow-Credentials", "true");//こいつ重要
 		response.setHeader("Access-Control-Max-Age", "86400");
 		response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+		response.setHeader("Content-Type", "application/json");
 
 		return this.getAuthenticationManager().authenticate(authRequest);
 	}

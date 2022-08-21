@@ -75,16 +75,17 @@ public class HomeService {
 
 		homeInitDto.setSaveAmount(0);
 		homeInitDto.setUsableAmount(0);
+		homeInitDto.setRestUsableAmount(calculateBalanceLogic.balanceCalculete(user.getId()));
 		if (!CollectionUtils.isEmpty(responseDtoList)) {
 			homeInitDto.setSaveAmount(responseDtoList.get(0).getSaveAmount());
 			homeInitDto.setUsableAmount(responseDtoList.get(0).getUsableAmount());
+			//残り使える金額
+			homeInitDto.setRestUsableAmount(
+					responseDtoList.get(0).getUsableAmount() + calculateBalanceLogic.balanceCalculete(user.getId()));
 		}
 
 		//本日の収支
 		homeInitDto.setBalanceAmount(calculateBalanceLogic.balanceCalculete(user.getId()));
-		//残り使える金額
-		homeInitDto.setRestUsableAmount(
-				responseDtoList.get(0).getUsableAmount() + calculateBalanceLogic.balanceCalculete(user.getId()));
 
 		return homeInitDto;
 	}

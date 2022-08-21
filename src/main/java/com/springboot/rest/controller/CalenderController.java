@@ -13,7 +13,7 @@ import com.springboot.rest.service.CalenderService;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/api/home/calender")
+@RequestMapping("/api/calender")
 public class CalenderController {
 
 	@Autowired

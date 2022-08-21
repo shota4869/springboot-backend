@@ -3,6 +3,7 @@ package com.springboot.rest.config;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -28,19 +29,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
+	@Value("${front-path}")
+	private String path;
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
 		// アクセス制限の設定
 		http
-				.authorizeRequests().mvcMatchers("/login/**")
+				.authorizeRequests().mvcMatchers("/api/login")
 				.permitAll()
-				.mvcMatchers("/api/user/regist-user/**")
+				.mvcMatchers("/api/user/regist-user")
 				.permitAll()
 				.anyRequest().authenticated()
 				.and()
 				.csrf()
-				.ignoringAntMatchers("/login")
+				.ignoringAntMatchers("/api/login")
 				.ignoringAntMatchers("/api/user/regist-user")
 				.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 				.and()
@@ -63,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		// FormログインのFilterを置き換える
 		http.addFilterAt(jsonUsernamePasswordAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-		//
+
 		// Spring Securityデフォルトでは、アクセス権限（ROLE）設定したページに未認証状態でアクセスすると403を返すので、
 		// 401を返すように変更
 		http.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
@@ -73,7 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		// ログアウト
 		http
 				.logout()
-				.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+				.logoutRequestMatcher(new AntPathRequestMatcher("/api/logout", "GET"))
 				// ログアウト時のリダイレクト抑制
 				.logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK))
 				.deleteCookies("JSESSIONID")
@@ -89,15 +93,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-		PasswordEncoder aEncoder = new Pbkdf2PasswordEncoder();
-		System.out.println(aEncoder.encode("test"));
 		return new Pbkdf2PasswordEncoder();
 	}
 
 	private CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
 		corsConfiguration.addAllowedMethod("*");
-		corsConfiguration.addAllowedOrigin("http://localhost:3000");
+		corsConfiguration.addAllowedOrigin(path);
 		corsConfiguration.addAllowedHeader(CorsConfiguration.ALL);
 		corsConfiguration.setAllowCredentials(true);
 
@@ -107,4 +109,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return corsSource;
 	}
 
+	private CookieCsrfTokenRepository getCookieCsrfTokenRepository() {
+		CookieCsrfTokenRepository repository = new CookieCsrfTokenRepository();
+		repository.setCookieHttpOnly(true);
+		repository.setCookiePath("/");
+		repository.setCookieName("XSRF-TOKEN");
+		return repository;
+
+	}
 }

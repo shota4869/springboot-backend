@@ -14,6 +14,7 @@ import com.springboot.rest.Entity.UserAmountAndMCategoryJoinEntity;
 import com.springboot.rest.auth.CustomUserDetails;
 import com.springboot.rest.common.BalanceFlag;
 import com.springboot.rest.common.FixFlag;
+import com.springboot.rest.common.MonthFlag;
 import com.springboot.rest.dto.BalanceListInitResponceDto;
 import com.springboot.rest.dto.BalanceListRequestDto;
 import com.springboot.rest.dto.UserAmountDto;
@@ -37,7 +38,7 @@ public class BalanceListService {
 	public BalanceListInitResponceDto init(BalanceListRequestDto requestDto) {
 		BalanceListInitResponceDto responseDto = new BalanceListInitResponceDto();
 
-		if ("0".equals(requestDto.getMonthFlg())) {
+		if (MonthFlag.INVALID.getCode().equals(requestDto.getMonthFlg())) {
 			responseDto = getDateBalanceList(requestDto);
 		} else {
 			responseDto = getMonthBalanceList(requestDto);

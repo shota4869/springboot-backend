@@ -9,15 +9,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.rest.dto.BalanceListInitResponceDto;
 import com.springboot.rest.dto.BalanceListRequestDto;
 import com.springboot.rest.service.BalanceListService;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost")
 @RestController
-@RequestMapping("/api/balance-list")
+@RequestMapping(value = "/api/balance-list", method = { RequestMethod.GET, RequestMethod.PUT })
 public class BalanceListController {
 
 	@Autowired
@@ -31,9 +32,9 @@ public class BalanceListController {
 	 */
 	@PostMapping
 	public ResponseEntity<BalanceListInitResponceDto> init(@RequestBody BalanceListRequestDto requestDto) {
-
 		try {
 			return ResponseEntity.ok(balanceListService.init(requestDto));
+
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}

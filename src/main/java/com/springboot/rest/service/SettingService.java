@@ -56,6 +56,10 @@ public class SettingService {
 		List<UserAmountSettingDto> userSettingList = usableAmountLogic.getAmountSettingByUseid(user.getId());
 		List<UserLineSettingDto> lineList = getLineSettingByUserid(user.getId());
 
+		//固定収入固定支出の取得
+		responceDto.setFixIncomeAmount(fixAmountLogic.getFixIncome(user.getId()));
+		responceDto.setFixExpenditureAmount(fixAmountLogic.getFixExpenditure(user.getId()));
+
 		if (userSettingList.size() > 2 || lineList.size() > 2) {
 			//2レコード以上登録されていた場合はエラーを返す。
 			throw new Exception();
@@ -72,9 +76,6 @@ public class SettingService {
 		}
 		//今月のユーザ設定がある場合、レスポンスに設定の上返却
 		responceDto.setAmountSetting(userSettingList.get(0));
-		//固定収入固定支出の取得
-		responceDto.setFixIncomeAmount(fixAmountLogic.getFixIncome(user.getId()));
-		responceDto.setFixExpenditureAmount(fixAmountLogic.getFixExpenditure(user.getId()));
 
 		return responceDto;
 
@@ -102,7 +103,7 @@ public class SettingService {
 
 		if (judge < 1) {
 			//登録されていなかったら登録処理
-			registSetting(user.getId(), requestDto, usableAmount);
+			registSetting(user.getId(), requestDto.getGoalAmount(), usableAmount);
 		} else if (judge > 2) {
 			//2レコード登録されていた場合はエラーを返す。（デッドコード）
 			throw new Exception();
@@ -128,14 +129,24 @@ public class SettingService {
 		//目標貯金額取得
 		List<UserAmountSettingDto> dtoList = usableAmountLogic.getAmountSettingByUseid(user.getId());
 		int goalAmount = 0;
-		if (!CollectionUtils.isEmpty(dtoList)) {
-			goalAmount = dtoList.get(0).getSaveAmount();
-		}
-		//使用金額計算
-		int usableAmount = fixAmountLogic.getUsableAmount(user.getId(), goalAmount);
 
-		//更新処理
-		usableAmountLogic.updateSetting(usableAmount, goalAmount);
+		if (!CollectionUtils.isEmpty(dtoList)) {
+			//すでに登録してあるデータがあった場合、更新する
+			goalAmount = dtoList.get(0).getSaveAmount();
+			//使用金額計算
+			int usableAmount = fixAmountLogic.getUsableAmount(user.getId(), goalAmount);
+
+			//更新処理
+			usableAmountLogic.updateSetting(usableAmount, goalAmount);
+		} else {
+			//登録されていなかった場合、登録する
+			//使用金額計算
+			int usableAmount = fixAmountLogic.getUsableAmount(user.getId(), goalAmount);
+
+			//登録されていなかったら登録処理
+			registSetting(user.getId(), String.valueOf(goalAmount), usableAmount);
+		}
+
 	}
 
 	/**
@@ -194,13 +205,13 @@ public class SettingService {
 	 * @return
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public boolean registSetting(long userId, AmountSettingRequestDto requestDto, int usableAmount)
+	public boolean registSetting(long userId, String goalAmount, int usableAmount)
 			throws SQLException {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
 		Date date = new Date();
 		int result = amountSettingRepository.insert(String.valueOf(userId), sdf.format(date).toString(),
-				requestDto.getGoalAmount(), String.valueOf(usableAmount),
+				goalAmount, String.valueOf(usableAmount),
 				CreateDate.getNowDateTime(), CreateDate.getNowDateTime());
 
 		if (result < 1) {
@@ -247,9 +258,6 @@ public class SettingService {
 			responseDto.setAccessToken(e.getAccessToken());
 			responseDtoList.add(responseDto);
 		});
-		if (responseDtoList.size() < 1) {
-			return null;
-		}
 
 		return responseDtoList;
 

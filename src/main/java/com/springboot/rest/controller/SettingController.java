@@ -36,7 +36,7 @@ public class SettingController {
 			SettingResponseDto responseDto = settingService.init();
 			return ResponseEntity.ok(responseDto);
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -53,7 +53,7 @@ public class SettingController {
 			return new ResponseEntity<>(HttpStatus.OK);
 
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -69,7 +69,7 @@ public class SettingController {
 			settingService.saveBalanceSetting(requestDto);
 			return new ResponseEntity<SettingSaveResponceDto>(settingService.getFixBalance(), HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class SettingController {
 			settingService.saveLineSetting(requestDto);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 }
