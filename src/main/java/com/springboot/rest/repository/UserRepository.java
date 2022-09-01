@@ -14,7 +14,7 @@ public interface UserRepository {
 	@Select("select * from users where email = #{email}")
 	Optional<UserEntity> findByEmail(String email);
 
-	@Insert("INSERT INTO health_management.users"
+	@Insert("INSERT INTO users"
 			+ "(username,"
 			+ "email,"
 			+ "password,"

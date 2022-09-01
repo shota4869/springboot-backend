@@ -109,7 +109,15 @@ public class LineNotify {
 		}
 	}
 
-	public void sendNotification(String message, String token) {
+	public void testExcecute(String accessToken) {
+
+		String message = "テスト接続に成功しました。";
+
+		sendNotification(message, accessToken);
+
+	}
+
+	private void sendNotification(String message, String token) {
 		HttpURLConnection connection = null;
 
 		try {
@@ -129,12 +137,10 @@ public class LineNotify {
 					String res = r.lines().collect(Collectors.joining());
 					if (!res.contains("\"message\":\"ok\"")) {
 						System.out.println(res);
-						System.out.println("なんか失敗したっぽい");
 					}
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("なんか失敗したっぽい2");
 
 		} finally {
 			if (connection != null) {

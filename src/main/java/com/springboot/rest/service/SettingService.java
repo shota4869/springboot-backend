@@ -21,6 +21,7 @@ import com.springboot.rest.dto.SettingSaveResponceDto;
 import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.dto.UserAmountSettingDto;
 import com.springboot.rest.dto.UserLineSettingDto;
+import com.springboot.rest.line.LineNotify;
 import com.springboot.rest.logic.FixAmountLogic;
 import com.springboot.rest.logic.UsableAmountLogic;
 import com.springboot.rest.logic.UserAmountLogic;
@@ -44,6 +45,9 @@ public class SettingService {
 
 	@Autowired
 	private UsableAmountLogic usableAmountLogic;
+
+	@Autowired
+	private LineNotify lineNotify;
 
 	/**
 	 * Inital process.
@@ -292,6 +296,18 @@ public class SettingService {
 				String.valueOf(userId));
 
 		return false;
+	}
+
+	/**
+	 * test line connecting.
+	 * 
+	 * @param userId
+	 * @param requestDto
+	 * @return
+	 */
+	public void testConnecting(LineSettingRequestDto requestDto) {
+
+		lineNotify.testExcecute(requestDto.getAccessToken());
 	}
 
 }

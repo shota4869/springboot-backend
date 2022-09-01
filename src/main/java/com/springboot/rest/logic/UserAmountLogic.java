@@ -28,7 +28,7 @@ public class UserAmountLogic {
 	@Transactional(rollbackFor = Exception.class)
 	public void registUserAmount(UserAmountRequestDto userAmountDto) throws SQLException {
 
-		String balanceName = "";
+		String balanceName = "-";
 
 		if (FixFlag.FIXED.getCode().equals(userAmountDto.getFixFlg())) {
 			balanceName = "固定";

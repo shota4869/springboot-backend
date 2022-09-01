@@ -35,7 +35,7 @@ public class UserController {
 			userService.registUser(user.getUsername(), user.getEmail(), user.getPassword());
 			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 		} catch (SQLException e) {
-			return new ResponseEntity<HttpStatus>(HttpStatus.CONFLICT);
+			return new ResponseEntity<HttpStatus>(HttpStatus.BAD_REQUEST);
 		}
 
 	}

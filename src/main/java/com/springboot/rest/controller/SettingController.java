@@ -88,4 +88,20 @@ public class SettingController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
+
+	/**
+	 * Regist line setting.
+	 * 
+	 * @param requestDto
+	 * @return HttpStatus list.
+	 */
+	@PostMapping("/test-connecting")
+	public ResponseEntity<HttpStatus> testConnecting(@RequestBody LineSettingRequestDto requestDto) {
+		try {
+			settingService.testConnecting(requestDto);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
 }
