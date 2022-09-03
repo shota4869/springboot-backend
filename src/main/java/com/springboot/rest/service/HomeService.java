@@ -16,7 +16,7 @@ import com.springboot.rest.auth.CustomUserDetails;
 import com.springboot.rest.common.BalanceFlag;
 import com.springboot.rest.dto.CategoryDto;
 import com.springboot.rest.dto.HomeInitResponseDto;
-import com.springboot.rest.dto.HomeSaveResponceDto;
+import com.springboot.rest.dto.HomeSaveResponseDto;
 import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.dto.UserAmountSettingDto;
 import com.springboot.rest.logic.CalculateBalanceLogic;
@@ -133,9 +133,9 @@ public class HomeService {
 	 * @param userId
 	 * @return
 	 */
-	public HomeSaveResponceDto calculateSaveAmount() {
+	public HomeSaveResponseDto calculateSaveAmount() {
 
-		HomeSaveResponceDto responseDto = new HomeSaveResponceDto();
+		HomeSaveResponseDto responseDto = new HomeSaveResponseDto();
 		CustomUserDetails user = getUserInfo();
 
 		int amount = 0;

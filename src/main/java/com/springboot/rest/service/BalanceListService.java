@@ -15,7 +15,7 @@ import com.springboot.rest.auth.CustomUserDetails;
 import com.springboot.rest.common.BalanceFlag;
 import com.springboot.rest.common.FixFlag;
 import com.springboot.rest.common.MonthFlag;
-import com.springboot.rest.dto.BalanceListInitResponceDto;
+import com.springboot.rest.dto.BalanceListInitResponseDto;
 import com.springboot.rest.dto.BalanceListRequestDto;
 import com.springboot.rest.dto.UserAmountDto;
 import com.springboot.rest.dto.UserAmountSettingDto;
@@ -46,8 +46,8 @@ public class BalanceListService {
 	 * @param requestDto
 	 * @return
 	 */
-	public BalanceListInitResponceDto init(BalanceListRequestDto requestDto) {
-		BalanceListInitResponceDto responseDto = new BalanceListInitResponceDto();
+	public BalanceListInitResponseDto init(BalanceListRequestDto requestDto) {
+		BalanceListInitResponseDto responseDto = new BalanceListInitResponseDto();
 
 		if (MonthFlag.INVALID.getCode().equals(requestDto.getMonthFlg())) {
 			responseDto = getDateBalanceList(requestDto);
@@ -64,9 +64,9 @@ public class BalanceListService {
 	 * @param date
 	 * @return
 	 */
-	public BalanceListInitResponceDto getDateBalanceList(BalanceListRequestDto requestDto) {
+	public BalanceListInitResponseDto getDateBalanceList(BalanceListRequestDto requestDto) {
 
-		BalanceListInitResponceDto responseDto = new BalanceListInitResponceDto();
+		BalanceListInitResponseDto responseDto = new BalanceListInitResponseDto();
 		List<UserAmountDto> incomeList = new ArrayList<>();
 		List<UserAmountDto> expenditureList = new ArrayList<>();
 
@@ -124,9 +124,9 @@ public class BalanceListService {
 	 * @param date
 	 * @return
 	 */
-	public BalanceListInitResponceDto getMonthBalanceList(BalanceListRequestDto requestDto) {
+	public BalanceListInitResponseDto getMonthBalanceList(BalanceListRequestDto requestDto) {
 
-		BalanceListInitResponceDto responseDto = new BalanceListInitResponceDto();
+		BalanceListInitResponseDto responseDto = new BalanceListInitResponseDto();
 		List<UserAmountDto> incomeList = new ArrayList<>();
 		List<UserAmountDto> expenditureList = new ArrayList<>();
 

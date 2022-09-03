@@ -5,7 +5,7 @@ package com.springboot.rest.dto;
  * 
  * @author takaseshota
  */
-public class SettingSaveResponceDto {
+public class SettingSaveResponseDto {
 
 	private int fixIncomeAmount;
 

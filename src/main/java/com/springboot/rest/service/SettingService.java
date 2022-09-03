@@ -17,7 +17,7 @@ import com.springboot.rest.common.CreateDate;
 import com.springboot.rest.dto.AmountSettingRequestDto;
 import com.springboot.rest.dto.LineSettingRequestDto;
 import com.springboot.rest.dto.SettingResponseDto;
-import com.springboot.rest.dto.SettingSaveResponceDto;
+import com.springboot.rest.dto.SettingSaveResponseDto;
 import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.dto.UserAmountSettingDto;
 import com.springboot.rest.dto.UserLineSettingDto;
@@ -163,8 +163,8 @@ public class SettingService {
 	 * 
 	 * @return
 	 */
-	public SettingSaveResponceDto getFixBalance() {
-		SettingSaveResponceDto responceDto = new SettingSaveResponceDto();
+	public SettingSaveResponseDto getFixBalance() {
+		SettingSaveResponseDto responceDto = new SettingSaveResponseDto();
 		CustomUserDetails user = getUserInfo();
 		responceDto.setFixIncomeAmount(fixAmountLogic.getFixIncome(user.getId()));
 		responceDto.setFixExpenditureAmount(fixAmountLogic.getFixExpenditure(user.getId()));

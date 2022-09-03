@@ -1,8 +1,6 @@
 package com.springboot.rest.logic;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +31,8 @@ public class UsableAmountLogic {
 	public List<UserAmountSettingDto> getAmountSettingByUseid(long userId) {
 
 		List<UserAmountSettingDto> responseDtoList = new ArrayList<>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
-		Date date = new Date();
 
-		amountSettingRepository.findByUseidAndMonth(String.valueOf(userId), sdf.format(date).toString())
+		amountSettingRepository.findByUseidAndMonth(String.valueOf(userId), CreateDate.getMonth())
 				.stream()
 				.forEach(e -> {
 					UserAmountSettingDto responseDto = new UserAmountSettingDto();
@@ -61,10 +57,7 @@ public class UsableAmountLogic {
 
 		CustomUserDetails user = getUserInfo();
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
-		Date date = new Date();
-
-		int result = amountSettingRepository.update(String.valueOf(user.getId()), sdf.format(date).toString(),
+		int result = amountSettingRepository.update(String.valueOf(user.getId()), CreateDate.getMonth(),
 				String.valueOf(usableAmount), String.valueOf(goalAmount), CreateDate.getNowDateTime());
 
 		if (result < 1) {

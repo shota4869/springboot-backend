@@ -32,7 +32,7 @@ public class CalenderController {
 		try {
 			return ResponseEntity.ok(calenderService.init());
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 

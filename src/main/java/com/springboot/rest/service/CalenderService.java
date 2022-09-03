@@ -2,14 +2,14 @@ package com.springboot.rest.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
-import com.springboot.rest.Entity.UserAmountEntity;
+import com.springboot.rest.Entity.CalculateAmountEntity;
 import com.springboot.rest.auth.CustomUserDetails;
 import com.springboot.rest.common.BalanceFlag;
 import com.springboot.rest.common.FixFlag;
@@ -29,125 +29,104 @@ public class CalenderService {
 	private UserAmountRepository userAmountRepository;
 
 	/**
-	 * Get calender info.
+	 * Initialize.
 	 * 
-	 * @param userId
-	 * @return
+	 * @return CalenderInitResponseDto
 	 */
 	public CalenderInitResponseDto init() {
 
 		CalenderInitResponseDto responseDto = new CalenderInitResponseDto();
 		List<CalenderDto> dtoList = new ArrayList<>();
-		List<String> dateList = new ArrayList<>();
-		List<String> fixedDateList = new ArrayList<>();
 
 		CustomUserDetails user = getUserInfo();
 
-		List<UserAmountEntity> entityList = userAmountRepository.findAll(String.valueOf(user.getId()));
-		//雑支出を取得
-		Map<String, Long> grpIncomeMap = entityList.stream()
-				.filter(e -> BalanceFlag.INCOME.getCode().equals(e.getBalanceFlg()))//収入
-				.filter(e -> FixFlag.NORMAL.getCode().equals(e.getFixFlg()))//雑収入
-				.collect(
-						Collectors.groupingBy(UserAmountEntity::getBalanceDate,
-								Collectors.summingLong(UserAmountEntity::getAmount)));
+		//ユーザ毎に登録した日付を取得（カレンダーの日付ごとに収支値を表示するため）①
+		List<CalculateAmountEntity> entityList = userAmountRepository
+				.findTotalAmountGroupByDate(String.valueOf(user.getId()));
 
-		//雑収入を取得
-		Map<String, Long> grpExpenditureMap = entityList.stream()
-				.filter(e -> BalanceFlag.EXPENDTURE.getCode().equals(e.getBalanceFlg()))//支出
-				.filter(e -> FixFlag.NORMAL.getCode().equals(e.getFixFlg()))//雑支出
-				.collect(
-						Collectors.groupingBy(UserAmountEntity::getBalanceDate,
-								Collectors.summingLong(UserAmountEntity::getAmount)));
-
-		//固定収入を取得
-		Map<String, Long> grpFixedIncomeMap = entityList.stream()
-				.filter(e -> BalanceFlag.INCOME.getCode().equals(e.getBalanceFlg()))//収入
-				.filter(e -> FixFlag.FIXED.getCode().equals(e.getFixFlg()))//固定収入
-				.collect(
-						Collectors.groupingBy(UserAmountEntity::getBalanceDate,
-								Collectors.summingLong(UserAmountEntity::getAmount)));
-
-		//固定収入を取得
-		Map<String, Long> grpFixedExpenditureMap = entityList.stream()
-				.filter(e -> BalanceFlag.EXPENDTURE.getCode().equals(e.getBalanceFlg()))//支出
-				.filter(e -> FixFlag.FIXED.getCode().equals(e.getFixFlg()))//固定支出
-				.collect(
-						Collectors.groupingBy(UserAmountEntity::getBalanceDate,
-								Collectors.summingLong(UserAmountEntity::getAmount)));
-
-		//支出が登録されている全日付
-		for (Map.Entry<String, Long> expEntry : grpExpenditureMap.entrySet()) {
-			dateList.add(expEntry.getKey());
-		}
-		//収入が登録されている全日付
-		for (Map.Entry<String, Long> incEntry : grpIncomeMap.entrySet()) {
-			dateList.add(incEntry.getKey());
-		}
-		//固定支出が登録されている全日付
-		for (Map.Entry<String, Long> expEntry : grpFixedExpenditureMap.entrySet()) {
-			fixedDateList.add(expEntry.getKey());
-		}
-		//固定収入が登録されている全日付
-		for (Map.Entry<String, Long> incEntry : grpFixedIncomeMap.entrySet()) {
-			fixedDateList.add(incEntry.getKey());
+		if (CollectionUtils.isEmpty(entityList)) {
+			//収支の登録がなかった場合、処理を中断する
+			return responseDto;
 		}
 
-		//収支で重複する日付を削除
-		List<String> dates = dateList.stream().distinct().collect(Collectors.toList());
-		//収支で重複する日付を削除
-		List<String> fixedDate = fixedDateList.stream().distinct().collect(Collectors.toList());
+		// ①について重複する日付を削る。日付のみのリストを作成。②
+		List<String> dateList = entityList.stream().map(e -> e.getBalanceDate()).distinct()
+				.collect(Collectors.toList());
 
-		//収支設定値計算
-		setResponceDto(dtoList, dates, grpIncomeMap, grpExpenditureMap, FixFlag.NORMAL.getCode());
-		//固定収支設定理計算
-		setResponceDto(dtoList, fixedDate, grpFixedIncomeMap, grpFixedExpenditureMap, FixFlag.FIXED.getCode());
+		//②で作成した日付分繰り返しレスポンスのDTOに計算結果を設定する。③
+		for (String date : dateList) {
+			int income = 0;
+			int expenditure = 0;
+			int fixedIncome = 0;
+			int fixedExpenditure = 0;
+
+			//①で取得した日付に合致した②のリストを取得 ④
+			List<CalculateAmountEntity> currentList = entityList.stream()
+					.filter(e -> date.equals(e.getBalanceDate())).collect(Collectors.toList());
+
+			//④のリストで繰り返し、それぞれの条件に基づいた変数に設定。
+			for (CalculateAmountEntity current : currentList) {
+				if (BalanceFlag.EXPENDTURE.getCode().equals(current.getBalanceFlg())
+						&& FixFlag.NORMAL.getCode().equals(current.getFixFlg())) {
+					//雑支出の場合
+					expenditure = current.getAmount();
+				} else if (BalanceFlag.INCOME.getCode().equals(current.getBalanceFlg())
+						&& FixFlag.NORMAL.getCode().equals(current.getFixFlg())) {
+					//雑収入の場合
+					income = current.getAmount();
+
+				} else if (BalanceFlag.EXPENDTURE.getCode().equals(current.getBalanceFlg())
+						&& FixFlag.FIXED.getCode().equals(current.getFixFlg())) {
+					//固定支出の場合
+					fixedExpenditure = current.getAmount();
+
+				} else if (BalanceFlag.INCOME.getCode().equals(current.getBalanceFlg())
+						&& FixFlag.FIXED.getCode().equals(current.getFixFlg())) {
+					//固定収入の場合
+					fixedIncome = current.getAmount();
+				} else {
+					continue;
+				}
+			}
+			//CalenderDtoに設定
+			if (income - expenditure != 0) {
+				//雑収支合計の設定
+				setCalendarDto(FixFlag.NORMAL.getCode(), income - expenditure, date,
+						dtoList);
+			}
+			if (fixedIncome - fixedExpenditure != 0) {
+				//固定収支合計の計算
+				setCalendarDto(FixFlag.FIXED.getCode(), fixedIncome - fixedExpenditure,
+						date,
+						dtoList);
+			}
+		}
+
 		responseDto.setCalenderDtoList(dtoList);
 		return responseDto;
 	}
 
 	/**
-	 * Set response dto list.
+	 * Set calendar dto
 	 * 
-	 * @param dtoList
-	 * @param dateList
-	 * @param incomeMap
-	 * @param expenditureMap
 	 * @param fixFlg
+	 * @param totalBalance
+	 * @param currentDate
+	 * @param dtoList
 	 */
-	private void setResponceDto(List<CalenderDto> dtoList, List<String> dateList, Map<String, Long> incomeMap,
-			Map<String, Long> expenditureMap, String fixFlg) {
+	private void setCalendarDto(String fixFlg, int totalBalance, String currentDate,
+			List<CalenderDto> dtoList) {
 
-		for (String date : dateList) {
-			//変数初期化
-			CalenderDto dto = new CalenderDto();
-			Long totalBalance = 0L;
-			Long income = 0L;
-			Long exxpenditure = 0L;
+		CalenderDto dto = new CalenderDto();
+		dto.setStart(currentDate.replace("/", "-"));
+		dto.setTitle(String.valueOf(totalBalance));
 
-			if (incomeMap.get(date) != null) {
-				//収支の登録さレている全日付の中で収入が登録されている日付があった場合、その日の収入を設定
-				income = incomeMap.get(date);
-			}
-			if (expenditureMap.get(date) != null) {
-				//収支の登録さレている全日付の中で支出が登録されている日付があった場合、その日の支出を設定
-				exxpenditure = expenditureMap.get(date);
-			}
-
-			//収支合計計算
-			totalBalance = income - exxpenditure;
-
-			//設定
-			//収支合計設定
-			dto.setTitle(String.format("%,d", totalBalance) + "円");
-			//日付設定
-			dto.setStart(date.replace("/", "-"));
-			if (FixFlag.FIXED.getCode().equals(fixFlg)) {
-				//固定収支の場合、イベントの背景色をグリーンにする設定
-				dto.setColor("Green");
-			}
-			dtoList.add(dto);
+		//固定の場合カラーも設定
+		if (FixFlag.FIXED.getCode().equals(fixFlg)) {
+			//固定収支の場合、イベントの背景色をグリーンにする設定
+			dto.setColor("Green");
 		}
+		dtoList.add(dto);
 	}
 
 	/**

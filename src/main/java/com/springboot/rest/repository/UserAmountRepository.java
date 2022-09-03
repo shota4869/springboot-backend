@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import com.springboot.rest.Entity.CalculateAmountEntity;
 import com.springboot.rest.Entity.UserAmountAndMCategoryJoinEntity;
 import com.springboot.rest.Entity.UserAmountEntity;
 
@@ -115,4 +116,20 @@ public interface UserAmountRepository {
 			+ "WHERE "
 			+ "user_id = #{userId} ")
 	List<UserAmountEntity> findAll(String userId);
+
+	@Select("SELECT "
+			+ "balance_date, "
+			+ "balance_flg, "
+			+ "fix_flg ,"
+			+ "sum(amount) as amount "
+			+ "FROM "
+			+ "user_amount_detail "
+			+ "WHERE "
+			+ "user_id = #{userId} "
+			+ "GROUP BY "
+			+ "balance_date, "
+			+ "balance_flg, "
+			+ "fix_flg;")
+	List<CalculateAmountEntity> findTotalAmountGroupByDate(String userId);
+
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.springboot.rest.dto.BalanceListInitResponceDto;
+import com.springboot.rest.dto.BalanceListInitResponseDto;
 import com.springboot.rest.dto.BalanceListRequestDto;
 import com.springboot.rest.service.BalanceListService;
 
@@ -34,7 +34,7 @@ public class BalanceListController {
 	 * @return
 	 */
 	@PostMapping
-	public ResponseEntity<BalanceListInitResponceDto> init(@RequestBody BalanceListRequestDto requestDto) {
+	public ResponseEntity<BalanceListInitResponseDto> init(@RequestBody BalanceListRequestDto requestDto) {
 		try {
 			return ResponseEntity.ok(balanceListService.init(requestDto));
 

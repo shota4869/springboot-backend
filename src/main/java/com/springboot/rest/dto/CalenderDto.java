@@ -11,8 +11,6 @@ public class CalenderDto {
 
 	private String start;
 
-	private String groupId;
-
 	private String color;
 
 	public String getTitle() {
@@ -29,14 +27,6 @@ public class CalenderDto {
 
 	public void setStart(String start) {
 		this.start = start;
-	}
-
-	public String getGroupId() {
-		return groupId;
-	}
-
-	public void setGroupId(String groupId) {
-		this.groupId = groupId;
 	}
 
 	public String getColor() {

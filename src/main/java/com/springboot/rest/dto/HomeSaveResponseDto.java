@@ -5,7 +5,7 @@ package com.springboot.rest.dto;
  * 
  * @author takaseshota
  */
-public class HomeSaveResponceDto {
+public class HomeSaveResponseDto {
 
 	private int restAmount;
 

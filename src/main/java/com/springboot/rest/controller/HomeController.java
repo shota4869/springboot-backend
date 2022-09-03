@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.rest.dto.HomeInitResponseDto;
-import com.springboot.rest.dto.HomeSaveResponceDto;
+import com.springboot.rest.dto.HomeSaveResponseDto;
 import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.service.HomeService;
 
@@ -52,15 +52,15 @@ public class HomeController {
 	 * @return
 	 */
 	@PostMapping("/save")
-	public ResponseEntity<HomeSaveResponceDto> saveBalance(@RequestBody UserAmountRequestDto userAmountDto) {
+	public ResponseEntity<HomeSaveResponseDto> saveBalance(@RequestBody UserAmountRequestDto userAmountDto) {
 		try {
 			homeService.registUserAmount(userAmountDto);
-			return new ResponseEntity<HomeSaveResponceDto>(homeService.calculateSaveAmount(), HttpStatus.OK);
+			return new ResponseEntity<HomeSaveResponseDto>(homeService.calculateSaveAmount(), HttpStatus.OK);
 		} catch (RuntimeException e) {
-			return new ResponseEntity<HomeSaveResponceDto>(HttpStatus.CONFLICT);
+			return new ResponseEntity<HomeSaveResponseDto>(HttpStatus.CONFLICT);
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
-			return new ResponseEntity<HomeSaveResponceDto>(HttpStatus.CONFLICT);
+			return new ResponseEntity<HomeSaveResponseDto>(HttpStatus.CONFLICT);
 		}
 	}
 }

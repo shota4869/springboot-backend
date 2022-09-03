@@ -7,7 +7,7 @@ import java.util.List;
  * 
  * @author takaseshota
  */
-public class BalanceListInitResponceDto {
+public class BalanceListInitResponseDto {
 
 	private List<UserAmountDto> incomeList;
 
