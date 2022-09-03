@@ -119,7 +119,7 @@ public class CalenderService {
 
 		CalenderDto dto = new CalenderDto();
 		dto.setStart(currentDate.replace("/", "-"));
-		dto.setTitle(String.valueOf(totalBalance));
+		dto.setTitle(String.format("%,d", totalBalance));
 
 		//固定の場合カラーも設定
 		if (FixFlag.FIXED.getCode().equals(fixFlg)) {
