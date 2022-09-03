@@ -8,19 +8,27 @@ import org.apache.ibatis.annotations.Select;
 
 import com.springboot.rest.Entity.UserEntity;
 
+/**
+ * User repository.
+ * 
+ * @author takaseshota
+ */
 @Mapper
 public interface UserRepository {
 
-	@Select("select * from users where email = #{email}")
+	@Select("SELECT * "
+			+ "FROM users "
+			+ "WHERE "
+			+ "email = #{email} ")
 	Optional<UserEntity> findByEmail(String email);
 
-	@Insert("INSERT INTO users"
+	@Insert("INSERT INTO users "
 			+ "(username,"
 			+ "email,"
 			+ "password,"
 			+ "create_at,"
-			+ "update_at)"
-			+ "VALUES"
+			+ "update_at) "
+			+ "VALUES "
 			+ "("
 			+ "#{username},"
 			+ "#{email},"

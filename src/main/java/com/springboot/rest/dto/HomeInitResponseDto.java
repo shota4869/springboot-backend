@@ -3,6 +3,11 @@ package com.springboot.rest.dto;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Home init response dto.
+ * 
+ * @author takaseshota
+ */
 public class HomeInitResponseDto implements Serializable {
 
 	private List<CategoryDto> incomeCategory;

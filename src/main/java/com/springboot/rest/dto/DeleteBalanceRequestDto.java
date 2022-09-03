@@ -1,5 +1,10 @@
 package com.springboot.rest.dto;
 
+/**
+ * Delete balance request dto.
+ * 
+ * @author takaseshota
+ */
 public class DeleteBalanceRequestDto {
 
 	private String id;

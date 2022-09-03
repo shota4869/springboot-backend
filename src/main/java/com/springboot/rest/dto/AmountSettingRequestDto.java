@@ -1,5 +1,10 @@
 package com.springboot.rest.dto;
 
+/**
+ * Amount setting request dto.
+ * 
+ * @author takaseshota
+ */
 public class AmountSettingRequestDto {
 
 	private String goalAmount;

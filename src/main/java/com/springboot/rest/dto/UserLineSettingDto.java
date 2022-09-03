@@ -1,5 +1,11 @@
 package com.springboot.rest.dto;
 
+/**
+ * User line setting dto.
+ * 
+ * @author takaseshota
+ *
+ */
 public class UserLineSettingDto {
 
 	private long id;

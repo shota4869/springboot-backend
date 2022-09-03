@@ -10,10 +10,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.springboot.rest.auth.CustomUserDetails;
-import com.springboot.rest.date.CreateDate;
+import com.springboot.rest.common.CreateDate;
 import com.springboot.rest.dto.UserAmountSettingDto;
 import com.springboot.rest.repository.AmountSettingRepository;
 
+/**
+ * Usable amount logic.
+ * 
+ * @author takaseshota
+ */
 @Component
 public class UsableAmountLogic {
 
@@ -47,7 +52,7 @@ public class UsableAmountLogic {
 	}
 
 	/**
-	 * 
+	 * Update setting
 	 * 
 	 * @param goalAmount
 	 * @param usableAmount

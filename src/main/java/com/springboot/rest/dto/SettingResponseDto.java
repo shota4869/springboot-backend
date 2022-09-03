@@ -1,5 +1,10 @@
 package com.springboot.rest.dto;
 
+/**
+ * Setting response dto.
+ * 
+ * @author takaseshota
+ */
 public class SettingResponseDto {
 
 	private UserAmountSettingDto amountSetting;

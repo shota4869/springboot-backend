@@ -23,6 +23,11 @@ import com.springboot.rest.logic.FixAmountLogic;
 import com.springboot.rest.logic.UsableAmountLogic;
 import com.springboot.rest.repository.UserAmountRepository;
 
+/**
+ * Balace list service.
+ * 
+ * @author takaseshota
+ */
 @Service
 public class BalanceListService {
 
@@ -35,6 +40,12 @@ public class BalanceListService {
 	@Autowired
 	private UsableAmountLogic usableAmountLogic;
 
+	/**
+	 * Initialize.
+	 * 
+	 * @param requestDto
+	 * @return
+	 */
 	public BalanceListInitResponceDto init(BalanceListRequestDto requestDto) {
 		BalanceListInitResponceDto responseDto = new BalanceListInitResponceDto();
 
@@ -183,6 +194,12 @@ public class BalanceListService {
 		}
 	}
 
+	/**
+	 * Calulate usable amount.
+	 * 
+	 * @param fixFlg
+	 * @throws Exception
+	 */
 	public void calculateUsableAmount(String fixFlg) throws Exception {
 
 		if (FixFlag.NORMAL.getCode().equals(fixFlg)) {

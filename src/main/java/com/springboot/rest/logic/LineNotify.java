@@ -1,4 +1,4 @@
-package com.springboot.rest.line;
+package com.springboot.rest.logic;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -11,6 +11,8 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -18,12 +20,15 @@ import org.springframework.util.CollectionUtils;
 
 import com.springboot.rest.Entity.AmountSettingEntity;
 import com.springboot.rest.Entity.LineSettingEntity;
-import com.springboot.rest.date.CreateDate;
-import com.springboot.rest.logic.CalculateBalanceLogic;
-import com.springboot.rest.logic.FixAmountLogic;
+import com.springboot.rest.common.CreateDate;
 import com.springboot.rest.repository.AmountSettingRepository;
 import com.springboot.rest.repository.LineSettingRepository;
 
+/**
+ * Line notify logic.
+ * 
+ * @author takaseshota
+ */
 @Component
 public class LineNotify {
 
@@ -39,11 +44,30 @@ public class LineNotify {
 	@Autowired
 	private FixAmountLogic fixAmountLogic;
 
-	private final String DEFALT_MESSAGE = "今日も1日頑張れ、いいことあるぞ";
+	/**
+	 * DEFAULT MESSAGE. 
+	 */
+	private final String DEFAULT_MESSAGE = "今日も1日頑張れ、いいことあるぞ";
 
-	final int time = 9;
+	/**
+	 * TEST MESSAGE.
+	 */
+	private final String TEST_MESSAGE = "テスト接続に成功しました。";
 
-	@Scheduled(cron = "0 0 * * * *", zone = "Asia/Tokyo")
+	/**
+	 * API URL.
+	 */
+	private final String API_URL = "https://notify-api.line.me/api/notify";
+
+	/**
+	 *  Logger.
+	 */
+	private final Logger log = LoggerFactory.getLogger(LineNotify.class);
+
+	/**
+	 * Daily line notify logic.
+	 */
+	@Scheduled(cron = "0 0 8 * * *", zone = "Asia/Tokyo")
 	public void executeNotification() {
 		StringBuilder sb = new StringBuilder();
 		String message = null;
@@ -63,12 +87,14 @@ public class LineNotify {
 
 			if (amountSettingEntityList.size() < 1) {
 				//目標金額設定がない場合デフォルトメッセージ設定
-				message = DEFALT_MESSAGE;
+				message = DEFAULT_MESSAGE;
 			} else {
 				//目標貯金額が設定されている場合
 				int resultBalance = fixAmountLogic.getUsableAmount(entity.getUserId(),
 						amountSettingEntityList.get(0).getSaveAmount())
 						+ calculateBalanceLogic.getPreviousDaybalanceCalculete(entity.getUserId());
+
+				//メッセージ設定
 				if (0 < fixAmountLogic.getFixIncome(entity.getUserId())) {
 					//固定収入が入力されてない場合
 					sb.append("\r・1日に使える金額：");
@@ -105,23 +131,38 @@ public class LineNotify {
 			//アクセストークンを設定
 			String token = entity.getAccessToken();
 
-			sendNotification(message, token);
+			try {
+				sendNotification(message, token);
+			} catch (Exception e) {
+				log.error(e + String.valueOf(entity.getUserId()));
+			}
 		}
 	}
 
-	public void testExcecute(String accessToken) {
+	/**
+	 * Test message excute.
+	 * 
+	 * @param accessToken
+	 * @throws Exception
+	 */
+	public void testExcecute(String accessToken) throws Exception {
 
-		String message = "テスト接続に成功しました。";
-
-		sendNotification(message, accessToken);
+		sendNotification(TEST_MESSAGE, accessToken);
 
 	}
 
-	private void sendNotification(String message, String token) {
+	/**
+	 * Line API excute.
+	 * 
+	 * @param message
+	 * @param token
+	 * @throws Exception
+	 */
+	private void sendNotification(String message, String token) throws Exception {
 		HttpURLConnection connection = null;
 
 		try {
-			URL url = new URL("https://notify-api.line.me/api/notify");
+			URL url = new URL(API_URL);
 			connection = (HttpURLConnection) url.openConnection();
 			connection.setDoOutput(true);
 			connection.setRequestMethod("POST");
@@ -131,17 +172,16 @@ public class LineNotify {
 			try (OutputStream outputStream = connection.getOutputStream();
 					PrintWriter writer = new PrintWriter(outputStream)) {
 				writer.append("message=").append(URLEncoder.encode(message, "UTF-8")).flush();
-				System.out.println("Bearer " + token);
 				try (InputStream is = connection.getInputStream();
 						BufferedReader r = new BufferedReader(new InputStreamReader(is))) {
 					String res = r.lines().collect(Collectors.joining());
 					if (!res.contains("\"message\":\"ok\"")) {
-						System.out.println(res);
+						throw new Exception();
 					}
 				}
 			}
 		} catch (Exception e) {
-
+			throw e;
 		} finally {
 			if (connection != null) {
 				connection.disconnect();

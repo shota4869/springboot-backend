@@ -9,10 +9,32 @@ import org.apache.ibatis.annotations.Update;
 
 import com.springboot.rest.Entity.AmountSettingEntity;
 
+/**
+ * Amount setting repository.
+ * 
+ * @author takaseshota
+ */
 @Mapper
 public interface AmountSettingRepository {
 
-	@Select("SELECT id, user_id, month_year,save_amount ,usable_amount  FROM user_amount_setting where user_id = #{userId} AND month_year = #{month}")
+	/**
+	 * 
+	 * 
+	 * @param userId
+	 * @param month
+	 * @return
+	 */
+	@Select("SELECT "
+			+ "id,"
+			+ "user_id, "
+			+ "month_year,"
+			+ "save_amount ,"
+			+ "usable_amount "
+			+ "FROM user_amount_setting "
+			+ "where "
+			+ "user_id = #{userId} "
+			+ "AND "
+			+ "month_year = #{month}")
 	List<AmountSettingEntity> findByUseidAndMonth(String userId, String month);
 
 	@Insert("INSERT INTO user_amount_setting "
@@ -40,7 +62,7 @@ public interface AmountSettingRepository {
 			+ "update_at = #{update} "
 			+ "WHERE "
 			+ "user_id = #{userId} "
-			+ "and "
+			+ "AND "
 			+ "month_year = #{month};")
 	int update(String userId, String month, String saveAmount, String usableAmount,
 			String update);

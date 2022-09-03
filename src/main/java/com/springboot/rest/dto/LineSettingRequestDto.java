@@ -1,5 +1,10 @@
 package com.springboot.rest.dto;
 
+/**
+ * Line setting request dto.
+ * 
+ * @author takaseshota
+ */
 public class LineSettingRequestDto {
 
 	private String lineFlg;

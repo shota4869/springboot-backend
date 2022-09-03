@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +16,11 @@ import com.springboot.rest.dto.HomeSaveResponceDto;
 import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.service.HomeService;
 
-@CrossOrigin(origins = "http://localhost:3000")
+/**
+ * Home controller
+ * 
+ * @author takaseshota
+ */
 @RestController
 @RequestMapping("/api/home")
 public class HomeController {
@@ -52,7 +55,7 @@ public class HomeController {
 	public ResponseEntity<HomeSaveResponceDto> saveBalance(@RequestBody UserAmountRequestDto userAmountDto) {
 		try {
 			homeService.registUserAmount(userAmountDto);
-			return new ResponseEntity<HomeSaveResponceDto>(homeService.saveAmountCalculete(), HttpStatus.OK);
+			return new ResponseEntity<HomeSaveResponceDto>(homeService.calculateSaveAmount(), HttpStatus.OK);
 		} catch (RuntimeException e) {
 			return new ResponseEntity<HomeSaveResponceDto>(HttpStatus.CONFLICT);
 		} catch (SQLException e) {

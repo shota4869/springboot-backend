@@ -7,9 +7,15 @@ import org.apache.ibatis.annotations.Select;
 
 import com.springboot.rest.Entity.MCategoryEntity;
 
+/**
+ * MCategory reposiroty.
+ * 
+ * @author takaseshota
+ */
 @Mapper
 public interface MCategoryRepository {
 
-	@Select("select * from m_category_code")
+	@Select("SELECT * "
+			+ "FROM m_category_code ")
 	List<MCategoryEntity> findAll();
 }

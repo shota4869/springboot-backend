@@ -24,6 +24,11 @@ import com.springboot.rest.logic.UserAmountLogic;
 import com.springboot.rest.repository.AmountSettingRepository;
 import com.springboot.rest.repository.MCategoryRepository;
 
+/**
+ * Home service.
+ * 
+ * @author takaseshota
+ */
 @Service
 public class HomeService {
 
@@ -39,6 +44,11 @@ public class HomeService {
 	@Autowired
 	private MCategoryRepository categoryRepository;
 
+	/**
+	 * Initialize.
+	 * 
+	 * @return
+	 */
 	public HomeInitResponseDto init() {
 		CustomUserDetails user = getUserInfo();
 		HomeInitResponseDto homeInitDto = new HomeInitResponseDto();
@@ -118,12 +128,12 @@ public class HomeService {
 	}
 
 	/**
-	 * 
+	 * Calculate save amount.
 	 * 
 	 * @param userId
 	 * @return
 	 */
-	public HomeSaveResponceDto saveAmountCalculete() {
+	public HomeSaveResponceDto calculateSaveAmount() {
 
 		HomeSaveResponceDto responseDto = new HomeSaveResponceDto();
 		CustomUserDetails user = getUserInfo();

@@ -18,6 +18,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Custom filter.
+ * 
+ * @author takaseshota
+ */
 public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
 	ObjectMapper objectMapper = new ObjectMapper();
@@ -46,6 +51,9 @@ public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthentica
 		this.passwordParameter = passwordParameter;
 	}
 
+	/**
+	 * Authentication process.
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
@@ -71,14 +79,6 @@ public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthentica
 				username, password);
 
 		authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
-
-		//CORSポリシーのエラー対策
-		response.setHeader("Access-Control-Allow-Origin", "http://localhost");
-		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE");
-		response.setHeader("Access-Control-Allow-Credentials", "true");//こいつ重要
-		response.setHeader("Access-Control-Max-Age", "86400");
-		response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
-		response.setHeader("Content-Type", "application/json");
 
 		return this.getAuthenticationManager().authenticate(authRequest);
 	}

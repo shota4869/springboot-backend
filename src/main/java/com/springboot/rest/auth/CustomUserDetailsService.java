@@ -10,6 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.springboot.rest.repository.UserRepository;
 
+/**
+ * 
+ * 
+ * @author takaseshota
+ */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 

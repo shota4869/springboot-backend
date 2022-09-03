@@ -1,5 +1,10 @@
 package com.springboot.rest.common;
 
+/**
+ * Month flg.
+ * 
+ * @author takaseshota
+ */
 public enum MonthFlag {
 
 	INVALID("0"), VALID("1");

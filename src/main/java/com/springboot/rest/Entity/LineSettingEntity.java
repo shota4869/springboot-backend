@@ -1,10 +1,17 @@
 package com.springboot.rest.Entity;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * Line setting entity.
+ * 
+ * @author takaseshota
+ */
+@Entity
 public class LineSettingEntity {
 
 	@Id

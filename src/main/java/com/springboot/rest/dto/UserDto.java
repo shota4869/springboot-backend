@@ -3,6 +3,11 @@ package com.springboot.rest.dto;
 import java.io.Serializable;
 import java.sql.Date;
 
+/**
+ * User dto.
+ * 
+ * @author takaseshota
+ */
 public class UserDto implements Serializable {
 
 	private long id;

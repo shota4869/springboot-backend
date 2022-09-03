@@ -1,5 +1,10 @@
 package com.springboot.rest.common;
 
+/**
+ * Fix flg.
+ * 
+ * @author takaseshota
+ */
 public enum FixFlag {
 
 	NORMAL("0"), FIXED("1");

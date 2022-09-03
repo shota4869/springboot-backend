@@ -7,9 +7,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.springboot.rest.date.CreateDate;
+import com.springboot.rest.common.CreateDate;
 import com.springboot.rest.repository.UserRepository;
 
+/**
+ * User service.
+ * 
+ * @author takaseshota
+ */
 @Service
 public class UserService {
 

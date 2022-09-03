@@ -5,6 +5,11 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+/**
+ * 
+ * 
+ * @author takaseshota
+ */
 public class CustomUserDetails extends User {
 
 	private long id;

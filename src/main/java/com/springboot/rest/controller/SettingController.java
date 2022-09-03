@@ -3,7 +3,6 @@ package com.springboot.rest.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +16,11 @@ import com.springboot.rest.dto.SettingSaveResponceDto;
 import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.service.SettingService;
 
-@CrossOrigin(origins = "http://localhost:3000")
+/**
+ * Setting controller.
+ * 
+ * @author takaseshota
+ */
 @RestController
 @RequestMapping("/api/setting")
 public class SettingController {
@@ -26,7 +29,7 @@ public class SettingController {
 	private SettingService settingService;
 
 	/**
-	 * Inital process.
+	 * Initialize.
 	 * 
 	 * @return SettingResponseDto list.
 	 */

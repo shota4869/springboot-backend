@@ -6,6 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * User amount and m category join entity.
+ * 
+ * @author takaseshota
+ */
 @Entity
 public class UserAmountAndMCategoryJoinEntity {
 

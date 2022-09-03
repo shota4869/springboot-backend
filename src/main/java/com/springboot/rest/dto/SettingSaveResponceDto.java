@@ -1,5 +1,10 @@
 package com.springboot.rest.dto;
 
+/**
+ * Setting save response dto.
+ * 
+ * @author takaseshota
+ */
 public class SettingSaveResponceDto {
 
 	private int fixIncomeAmount;

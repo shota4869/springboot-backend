@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.springboot.rest.auth.CustomUserDetails;
-import com.springboot.rest.date.CreateDate;
+import com.springboot.rest.common.CreateDate;
 import com.springboot.rest.dto.AmountSettingRequestDto;
 import com.springboot.rest.dto.LineSettingRequestDto;
 import com.springboot.rest.dto.SettingResponseDto;
@@ -21,13 +21,18 @@ import com.springboot.rest.dto.SettingSaveResponceDto;
 import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.dto.UserAmountSettingDto;
 import com.springboot.rest.dto.UserLineSettingDto;
-import com.springboot.rest.line.LineNotify;
 import com.springboot.rest.logic.FixAmountLogic;
+import com.springboot.rest.logic.LineNotify;
 import com.springboot.rest.logic.UsableAmountLogic;
 import com.springboot.rest.logic.UserAmountLogic;
 import com.springboot.rest.repository.AmountSettingRepository;
 import com.springboot.rest.repository.LineSettingRepository;
 
+/**
+ * Setting service.
+ * 
+ * @author takaseshota
+ */
 @Service
 public class SettingService {
 
@@ -50,7 +55,7 @@ public class SettingService {
 	private LineNotify lineNotify;
 
 	/**
-	 * Inital process.
+	 * Initalize.
 	 * 
 	 * @return SettingResponseDto list.
 	 */
@@ -226,7 +231,7 @@ public class SettingService {
 	}
 
 	/**
-	 * update setting.
+	 * Update setting.
 	 * 
 	 * @return
 	 */
@@ -299,13 +304,13 @@ public class SettingService {
 	}
 
 	/**
-	 * test line connecting.
+	 * Test line connecting.
 	 * 
 	 * @param userId
 	 * @param requestDto
 	 * @return
 	 */
-	public void testConnecting(LineSettingRequestDto requestDto) {
+	public void testConnecting(LineSettingRequestDto requestDto) throws Exception {
 
 		lineNotify.testExcecute(requestDto.getAccessToken());
 	}

@@ -3,6 +3,11 @@ package com.springboot.rest.dto;
 import java.io.Serializable;
 import java.sql.Date;
 
+/**
+ * Category dto.
+ * 
+ * @author takaseshota
+ */
 public class CategoryDto implements Serializable {
 
 	private int id;

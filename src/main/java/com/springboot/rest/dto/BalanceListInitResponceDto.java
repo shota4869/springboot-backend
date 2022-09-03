@@ -2,6 +2,11 @@ package com.springboot.rest.dto;
 
 import java.util.List;
 
+/**
+ * Balance list init responce dto.
+ * 
+ * @author takaseshota
+ */
 public class BalanceListInitResponceDto {
 
 	private List<UserAmountDto> incomeList;

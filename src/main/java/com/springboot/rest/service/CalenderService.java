@@ -17,6 +17,11 @@ import com.springboot.rest.dto.CalenderDto;
 import com.springboot.rest.dto.CalenderInitResponseDto;
 import com.springboot.rest.repository.UserAmountRepository;
 
+/**
+ * Calendar service
+ * 
+ * @author takaseshota
+ */
 @Service
 public class CalenderService {
 

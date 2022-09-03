@@ -6,9 +6,19 @@ import org.springframework.stereotype.Service;
 import com.springboot.rest.auth.CustomUserDetails;
 import com.springboot.rest.dto.LoginResponseDto;
 
+/**
+ * Login service.
+ * 
+ * @author takaseshota
+ */
 @Service
 public class LoginService {
 
+	/**
+	 * Initialize.
+	 * 
+	 * @return
+	 */
 	public LoginResponseDto init() {
 		LoginResponseDto dto = new LoginResponseDto();
 
@@ -18,6 +28,5 @@ public class LoginService {
 		dto.setUserDetails(user);
 
 		return dto;
-
 	}
 }

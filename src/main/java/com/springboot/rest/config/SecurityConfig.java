@@ -23,6 +23,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.springboot.rest.filter.JsonUsernamePasswordAuthenticationFilter;
 
+/**
+ * Security config.
+ * 
+ * @author takaseshota
+ */
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -32,6 +37,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Value("${front-path}")
 	private String path;
 
+	/**
+	 * Configure.
+	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
@@ -85,17 +93,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	}
 
+	/**
+	 * Detail service configure.
+	 */
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService)
 				.passwordEncoder(passwordEncoder());
 	}
 
+	/**
+	 * Set encoding type.
+	 * 
+	 * @return
+	 */
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new Pbkdf2PasswordEncoder();
 	}
 
+	/**
+	 * Set cors.
+	 * 
+	 * @return
+	 */
 	private CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
 		corsConfiguration.addAllowedMethod("*");
@@ -109,12 +130,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return corsSource;
 	}
 
-	private CookieCsrfTokenRepository getCookieCsrfTokenRepository() {
-		CookieCsrfTokenRepository repository = new CookieCsrfTokenRepository();
-		repository.setCookieHttpOnly(true);
-		repository.setCookiePath("/");
-		repository.setCookieName("XSRF-TOKEN");
-		return repository;
-
-	}
 }

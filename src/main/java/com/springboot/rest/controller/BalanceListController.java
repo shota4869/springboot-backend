@@ -3,7 +3,6 @@ package com.springboot.rest.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +15,11 @@ import com.springboot.rest.dto.BalanceListInitResponceDto;
 import com.springboot.rest.dto.BalanceListRequestDto;
 import com.springboot.rest.service.BalanceListService;
 
-@CrossOrigin(origins = "http://localhost")
+/**
+ * Balance list controller.
+ * 
+ * @author takaseshota
+ */
 @RestController
 @RequestMapping(value = "/api/balance-list", method = { RequestMethod.GET, RequestMethod.PUT })
 public class BalanceListController {
@@ -25,7 +28,7 @@ public class BalanceListController {
 	private BalanceListService balanceListService;
 
 	/**
-	 * 
+	 * Initialize.
 	 * 
 	 * @param balanceListRequestDto
 	 * @return
@@ -42,7 +45,7 @@ public class BalanceListController {
 	}
 
 	/**
-	 * 
+	 * Delete record.
 	 * 
 	 * @param id
 	 * @return
@@ -57,6 +60,12 @@ public class BalanceListController {
 		}
 	}
 
+	/**
+	 * Update fix balance
+	 * 
+	 * @param fixFlg
+	 * @return
+	 */
 	@PostMapping("/update")
 	public ResponseEntity<HttpStatus> updateFixedBalance(@RequestBody String fixFlg) {
 		try {

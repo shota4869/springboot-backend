@@ -8,11 +8,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.springboot.rest.auth.CustomUserDetails;
+import com.springboot.rest.common.CreateDate;
 import com.springboot.rest.common.FixFlag;
-import com.springboot.rest.date.CreateDate;
 import com.springboot.rest.dto.UserAmountRequestDto;
 import com.springboot.rest.repository.UserAmountRepository;
 
+/**
+ * User amount logic.
+ * 
+ * @author takaseshota
+ */
 @Component
 public class UserAmountLogic {
 

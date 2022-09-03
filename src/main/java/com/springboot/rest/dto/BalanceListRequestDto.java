@@ -1,5 +1,11 @@
 package com.springboot.rest.dto;
 
+/**
+ * Balance list request dto.
+ * 
+ * @author takaseshota
+ *
+ */
 public class BalanceListRequestDto {
 
 	private String date;

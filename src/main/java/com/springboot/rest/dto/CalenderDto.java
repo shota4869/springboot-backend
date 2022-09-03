@@ -1,5 +1,10 @@
 package com.springboot.rest.dto;
 
+/**
+ * Calender dto.
+ * 
+ * @author takaseshota
+ */
 public class CalenderDto {
 
 	private String title;

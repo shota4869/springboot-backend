@@ -8,16 +8,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.springboot.rest.common.BalanceFlag;
+import com.springboot.rest.common.CreateDate;
 import com.springboot.rest.common.FixFlag;
-import com.springboot.rest.date.CreateDate;
 import com.springboot.rest.repository.UserAmountRepository;
 
+/**
+ * Fix amount logic.
+ * 
+ * @author takaseshota
+ */
 @Component
 public class FixAmountLogic {
 
 	@Autowired
 	private UserAmountRepository userAmountRepository;
 
+	/**
+	 * Get usable amount.
+	 * 
+	 * @param userId
+	 * @param saveAmount
+	 * @return
+	 */
 	public int getUsableAmount(long userId, int saveAmount) {
 		return (calculateFixAmount(userId) - saveAmount) / getDays();
 
@@ -50,6 +62,12 @@ public class FixAmountLogic {
 		return lastDay;
 	}
 
+	/**
+	 * Get fix income.
+	 * 
+	 * @param userId
+	 * @return
+	 */
 	public int getFixIncome(long userId) {
 		//固定収入
 		List<Integer> incomeAmountList = userAmountRepository
@@ -64,6 +82,12 @@ public class FixAmountLogic {
 
 	}
 
+	/**
+	 * Get fix expenditure.
+	 * 
+	 * @param userId
+	 * @return
+	 */
 	public int getFixExpenditure(long userId) {
 
 		List<Integer> expenditureAmountList = userAmountRepository

@@ -6,6 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * Amount setting entity.
+ * 
+ * @author takaseshota
+ */
 @Entity
 public class AmountSettingEntity {
 

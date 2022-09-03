@@ -1,5 +1,10 @@
 package com.springboot.rest.dto;
 
+/**
+ * Usable amount request dto.
+ * 
+ * @author takaseshota
+ */
 public class UserAmountRequestDto {
 
 	private String userId;

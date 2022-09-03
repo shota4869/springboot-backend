@@ -1,5 +1,10 @@
 package com.springboot.rest.dto;
 
+/**
+ * Balance list category dto.
+ * 
+ * @author takaseshota
+ */
 public class BlanceListCategoryDto {
 
 	private String categoryName;

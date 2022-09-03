@@ -9,10 +9,22 @@ import org.apache.ibatis.annotations.Update;
 
 import com.springboot.rest.Entity.LineSettingEntity;
 
+/**
+ * Line setting repository.
+ * 
+ * @author takaseshota
+ */
 @Mapper
 public interface LineSettingRepository {
 
-	@Select("SELECT id, user_id, line_flg, access_token from user_line_setting where user_id = #{userId}")
+	@Select("SELECT "
+			+ "id, "
+			+ "user_id, "
+			+ "line_flg, "
+			+ "access_token "
+			+ "from user_line_setting "
+			+ "where "
+			+ "user_id = #{userId}")
 	List<LineSettingEntity> findAllByUserid(String userId);
 
 	@Insert("INSERT INTO user_line_setting"
@@ -39,7 +51,14 @@ public interface LineSettingRepository {
 			+ "WHERE user_id = #{userId} ; ")
 	int update(String lineFlg, String accessToken, String update, String userId);
 
-	@Select("SELECT id, user_id, line_flg, access_token from user_line_setting where line_flg = 1")
+	@Select("SELECT "
+			+ "id, "
+			+ "user_id, "
+			+ "line_flg, "
+			+ "access_token "
+			+ "from user_line_setting "
+			+ "where "
+			+ "line_flg = 1")
 	List<LineSettingEntity> findAll();
 
 }
