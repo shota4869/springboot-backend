@@ -1,9 +1,7 @@
 package com.springboot.rest.service;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,7 @@ import org.springframework.util.CollectionUtils;
 import com.springboot.rest.Entity.MCategoryEntity;
 import com.springboot.rest.auth.CustomUserDetails;
 import com.springboot.rest.common.BalanceFlag;
+import com.springboot.rest.common.CreateDate;
 import com.springboot.rest.dto.CategoryDto;
 import com.springboot.rest.dto.HomeInitResponseDto;
 import com.springboot.rest.dto.HomeSaveResponseDto;
@@ -108,10 +107,8 @@ public class HomeService {
 	public List<UserAmountSettingDto> getAmountSettingByUseid(long userId) {
 
 		List<UserAmountSettingDto> responseDtoList = new ArrayList<>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
-		Date date = new Date();
-
-		settingRepository.findByUseidAndMonth(String.valueOf(userId), sdf.format(date).toString())
+		System.out.println(CreateDate.getMonth());
+		settingRepository.findByUseidAndMonth(String.valueOf(userId), CreateDate.getMonth())
 				.stream()
 				.forEach(e -> {
 					UserAmountSettingDto responseDto = new UserAmountSettingDto();
@@ -143,7 +140,6 @@ public class HomeService {
 
 		if (!CollectionUtils.isEmpty(dtoList)) {
 			amount = dtoList.get(0).getUsableAmount();
-
 		}
 		responseDto.setRestAmount(amount + calculateBalanceLogic.balanceCalculete(user.getId()));
 		responseDto.setBalanceAmount(calculateBalanceLogic.balanceCalculete(user.getId()));

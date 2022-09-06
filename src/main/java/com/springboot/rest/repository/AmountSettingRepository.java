@@ -17,13 +17,6 @@ import com.springboot.rest.Entity.AmountSettingEntity;
 @Mapper
 public interface AmountSettingRepository {
 
-	/**
-	 * 
-	 * 
-	 * @param userId
-	 * @param month
-	 * @return
-	 */
 	@Select("SELECT "
 			+ "id,"
 			+ "user_id, "

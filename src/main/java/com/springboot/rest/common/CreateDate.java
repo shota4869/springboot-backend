@@ -3,6 +3,7 @@ package com.springboot.rest.common;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Create system date class.
@@ -12,14 +13,17 @@ import java.util.Date;
  */
 public class CreateDate {
 
+	private static final Date date = new Date();
+
 	/**
 	 * Get date time.
 	 * 
 	 * @return
 	 */
 	public static String getNowDateTime() {
-		final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		final Date date = new Date(System.currentTimeMillis());
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		TimeZone timeZoneJP = TimeZone.getTimeZone("Asia/Tokyo");
+		df.setTimeZone(timeZoneJP);
 		return df.format(date);
 	}
 
@@ -29,8 +33,10 @@ public class CreateDate {
 	 * @return
 	 */
 	public static String getNowDate() {
-		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
-		final Date date = new Date(System.currentTimeMillis());
+		DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+		TimeZone timeZoneJP = TimeZone.getTimeZone("Asia/Tokyo");
+		Date date = new Date();
+		df.setTimeZone(timeZoneJP);
 		return df.format(date);
 	}
 
@@ -40,8 +46,10 @@ public class CreateDate {
 	 * @return
 	 */
 	public static String getMonth() {
-		final DateFormat df = new SimpleDateFormat("yyyy/MM");
-		final Date date = new Date(System.currentTimeMillis());
+		DateFormat df = new SimpleDateFormat("yyyy/MM");
+		TimeZone timeZoneJP = TimeZone.getTimeZone("Asia/Tokyo");
+		Date date = new Date();
+		df.setTimeZone(timeZoneJP);
 		return df.format(date);
 	}
 
