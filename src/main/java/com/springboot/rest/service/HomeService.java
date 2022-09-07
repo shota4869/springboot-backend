@@ -107,7 +107,6 @@ public class HomeService {
 	public List<UserAmountSettingDto> getAmountSettingByUseid(long userId) {
 
 		List<UserAmountSettingDto> responseDtoList = new ArrayList<>();
-		System.out.println(CreateDate.getMonth());
 		settingRepository.findByUseidAndMonth(String.valueOf(userId), CreateDate.getMonth())
 				.stream()
 				.forEach(e -> {
